@@ -1,0 +1,4 @@
+# Ignore
+obj
+collisions
+*.o
