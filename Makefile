@@ -35,7 +35,7 @@ OBJ		:= obj
 LIBDIR	:= lib
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
-LIBS		:= -Llib -Wl,-rpath=lib/
+LIBS		:= -Llib lib/libsfml/libsfml-graphics.so.2.5 lib/libsfml/libsfml-system.so.2.5 lib/libsfml/libsfml-window.so.2.5 -Wl,-rpath=lib/
 # Include directories, to use relative includes (the ones with "<>") and get the static libraries from the proyect
 INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 # Get all directories and subdirectories of src
