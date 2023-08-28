@@ -26,15 +26,18 @@ endef
 
 APP 	:= collisions
 CCFLAGS := -Wall -pedantic
-CFLAGS	:= $(CCFLAGS)
+CFLAGS	:= $(CCFLAGS)-std=c++20
 CC		:= g++
 C		:= gcc
 MKDIR	:= mkdir -p # Create sub-folders in one shot
 SRC		:= src
 OBJ		:= obj
+LIBDIR	:= lib
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
 LIBS		:= -Llib -Wl,-rpath=lib/
+# Include directories, to use relative includes (the ones with "<>") and get the static libraries from the proyect
+INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 # Get all directories and subdirectories of src
 SUBDIRS		:= $(shell find $(SRC)/ -type d)
 # Substitute all src directories and subdirectories with obj/ as it's root
@@ -58,10 +61,10 @@ $(APP) : $(OBJSUBDIRS) $(ALLOBJ)
 	$(CC) -o $(APP) $(ALLOBJ) $(LIBS)
 
 # C++ compiling
-$(foreach F,$(ALLCPP),$(eval $(call COMPILE,$(CC),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CCFLAGS))))
+$(foreach F,$(ALLCPP),$(eval $(call COMPILE,$(CC),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CCFLAGS) $(INCDIRS))))
 
 # C compiling
-$(foreach F,$(ALLC),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS))))
+$(foreach F,$(ALLC),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS) $(INCDIRS))))
 
 $(OBJSUBDIRS) : 
 	$(MKDIR) $(OBJSUBDIRS)
