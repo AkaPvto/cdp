@@ -33,9 +33,11 @@ MKDIR	:= mkdir -p # Create sub-folders in one shot
 SRC		:= src
 OBJ		:= obj
 LIBDIR	:= lib
+LIBSFML := $(LIBDIR)/libsfml
+ALLSFMLLIBS := $(LIBSFML)/libGL.so.1 $(LIBSFML)/libXrandr.so.2 $(LIBSFML)/libsfml-graphics.so.2.5 $(LIBSFML)/libsfml-system.so.2.5 $(LIBSFML)/libsfml-window.so.2.5
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
-LIBS		:= -Llib lib/libsfml/libsfml-graphics.so.2.5 lib/libsfml/libsfml-system.so.2.5 lib/libsfml/libsfml-window.so.2.5 -Wl,-rpath=lib/
+LIBS		:= -Llib $(ALLSFMLLIBS) -Wl,-rpath=lib/
 # Include directories, to use relative includes (the ones with "<>") and get the static libraries from the proyect
 INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 # Get all directories and subdirectories of src
