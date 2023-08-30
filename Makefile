@@ -24,17 +24,17 @@ endef
 # 	CONFIG
 ##################################
 
-APP 	:= collisions
-CCFLAGS := -Wall -pedantic
-CFLAGS	:= $(CCFLAGS)-std=c++20
-CC		:= g++
-C		:= gcc
-MKDIR	:= mkdir -p # Create sub-folders in one shot
-SRC		:= src
-OBJ		:= obj
-LIBDIR	:= lib
-LIBSFML := $(LIBDIR)/libsfml
-ALLSFMLLIBS := $(LIBSFML)/libGL.so.1 $(LIBSFML)/libXrandr.so.2 $(LIBSFML)/libsfml-graphics.so.2.5 $(LIBSFML)/libsfml-system.so.2.5 $(LIBSFML)/libsfml-window.so.2.5
+APP 		:= collisions
+CCFLAGS 	:= -Wall -pedantic
+CFLAGS		:= $(CCFLAGS)-std=c++20
+CC			:= g++
+C			:= gcc
+MKDIR		:= mkdir -p # Create sub-folders in one shot
+SRC			:= src
+OBJ			:= obj
+LIBDIR		:= lib
+LIBBINDIR	:= $(LIBDIR)/binlibs
+ALLBINLIBS	:= $(LIBSFML)/libGL.so.1 $(LIBSFML)/libXrandr.so.2 $(LIBSFML)/libsfml-graphics.so.2.5 $(LIBSFML)/libsfml-system.so.2.5 $(LIBSFML)/libsfml-window.so.2.5
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
 LIBS		:= -Llib $(ALLSFMLLIBS) -Wl,-rpath=lib/
