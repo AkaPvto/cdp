@@ -34,10 +34,10 @@ SRC			:= src
 OBJ			:= obj
 LIBDIR		:= lib
 LIBBINDIR	:= $(LIBDIR)/binlibs
-ALLBINLIBS	:= $(LIBSFML)/libGL.so.1 $(LIBSFML)/libXrandr.so.2 $(LIBSFML)/libsfml-graphics.so.2.5 $(LIBSFML)/libsfml-system.so.2.5 $(LIBSFML)/libsfml-window.so.2.5
+ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libsfml-graphics.so.2.5 $(LIBBINDIR)/libsfml-system.so.2.5 $(LIBBINDIR)/libsfml-window.so.2.5
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
-LIBS		:= -Llib $(ALLSFMLLIBS) -Wl,-rpath=lib/
+LIBS		:= -Llib $(ALLBINLIBS) -Wl,-rpath=lib/
 # Include directories, to use relative includes (the ones with "<>") and get the static libraries from the proyect
 INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 # Get all directories and subdirectories of src
