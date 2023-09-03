@@ -3,24 +3,26 @@
 
 namespace CDP{
 
-// Default constructor initialices the value of all the vertex to 0
-template <uint16_t I>
-Polygon<I>::Polygon(){
-    n_vertices = I;
-    for(Vertex v : vertices) v = {0,0,0};
-}
+// // Default constructor initialices the value of all the vertex to 0
+// Polygon::Polygon(){
+//     for(Vertex v : vertices) v = Vertex{};
+// }
 
 // Fills the values of vertices with the SFML Shape
-template <uint16_t I>
-bool Polygon<I>::fill(sf::Shape const* s){
-    if(s == nullptr || n_vertices != s->getPointCount()) return false;
+bool Polygon::fill(sf::Shape const* s){
+    if(s == nullptr) return false;
+
+    // Get the polygon's amount of vertices
+    if(n_vertices = s->getPointCount(); n_vertices <= 0) return false;
 
     // Get the global position
-    position = s->getPosition();
+    position.x = s->getPosition().x;
+    position.y = s->getPosition().y;
 
     // Get the local vertex coordinates
     for(size_t i{}; i<n_vertices ; ++i){
-        vertices[i] = s->getPoint(i);
+        vertices.emplace_back(Vertex{s->getPoint(i).x + position.x, s->getPoint(i).y + position.y});
     }
+    return true;
 }
 } // namespace CDP

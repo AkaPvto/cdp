@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "algorithm/algorith.hpp"
 #include <vector>
 #include <string>
 
@@ -16,6 +17,8 @@ struct Core{
             double const h = sf::VideoMode::getDesktopMode().height  * WINDOW_PERCENTAGE, 
             double const w = sf::VideoMode::getDesktopMode().width   * WINDOW_PERCENTAGE);
     void run();
+    void mouse_movement();
+    void check_collision();
     void draw();
     void delete_shapes();
     void initialize(uint32_t const);
@@ -29,6 +32,7 @@ struct Core{
         double const width{};
         // Static array. Contains pointer to functions for different scenarios initialization
         std::array<Core::FuncType, 3> initialize_types;
+        Algorithm* algth{};
 
         
 

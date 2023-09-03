@@ -1,21 +1,22 @@
+#pragma once
+
 #include <stdint.h>
-#include <array>
+#include <vector>
 
 using real = float;
 
 namespace sf{ struct Shape; }
 
 namespace CDP{
-using Vertex = std::array<real, 2>;
+struct Vertex{
+    real x{},y{};
+};
 
-template <uint16_t I>
 struct Polygon{
-    Polygon();
     bool fill(sf::Shape const* s);
     
-    private:    
-        uint16_t n_vertices{};
-        std::array<Vertex, I> vertices;
-        std::array<real, 2> position;
+    uint16_t n_vertices{};
+    std::vector<Vertex> vertices;
+    Vertex position{};
 };
 } // namespace CDP

@@ -1,8 +1,8 @@
+#include "algorith.hpp"
+
 namespace CDP{
 
-struct GJK{
-    GJK() = default;
-    GJK(int const _a, int const _b) : a{_a}, b{_b}{}
-    int a{},b{};
+struct GJK : Algorithm{
+    bool colide(Polygon const&, Polygon const&);
 };
 } // namespace CDP
