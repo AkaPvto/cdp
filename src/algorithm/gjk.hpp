@@ -1,4 +1,4 @@
-#include "algorith.hpp"
+#include "algorithm.hpp"
 
 namespace CDP{
 

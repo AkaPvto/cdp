@@ -3,20 +3,18 @@
 #include <stdint.h>
 #include <vector>
 
-using real = float;
+#include "vector2r.hpp"
+#include "precision.h"
 
 namespace sf{ struct Shape; }
 
 namespace CDP{
-struct Vertex{
-    real x{},y{};
-};
 
 struct Polygon{
     bool fill(sf::Shape const* s);
     
     uint16_t n_vertices{};
-    std::vector<Vertex> vertices;
-    Vertex position{};
+    std::vector<Vector2r> vertices;
+    Vector2r position{};
 };
 } // namespace CDP

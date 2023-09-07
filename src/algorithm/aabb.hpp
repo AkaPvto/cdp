@@ -1,4 +1,4 @@
-#include "algorith.hpp"
+#include "algorithm.hpp"
 #include "types/polygon.hpp"
 
 namespace CDP{

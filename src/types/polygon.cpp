@@ -5,7 +5,7 @@ namespace CDP{
 
 // // Default constructor initialices the value of all the vertex to 0
 // Polygon::Polygon(){
-//     for(Vertex v : vertices) v = Vertex{};
+//     for(Vector2r v : vertices) v = Vector2r{};
 // }
 
 // Fills the values of vertices with the SFML Shape
@@ -21,7 +21,7 @@ bool Polygon::fill(sf::Shape const* s){
 
     // Get the local vertex coordinates
     for(size_t i{}; i<n_vertices ; ++i){
-        vertices.emplace_back(Vertex{s->getPoint(i).x + position.x, s->getPoint(i).y + position.y});
+        vertices.emplace_back(Vector2r{s->getPoint(i).x + position.x, s->getPoint(i).y + position.y});
     }
     return true;
 }

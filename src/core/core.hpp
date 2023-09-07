@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "algorithm/algorith.hpp"
+#include "algorithm/algorithm.hpp"
 #include <vector>
 #include <string>
 

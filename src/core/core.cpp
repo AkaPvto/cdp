@@ -7,6 +7,7 @@
 
 #include "algorithm/aabb.hpp"
 #include "algorithm/gjk.hpp"
+#include "algorithm/sat.hpp"
 
 // #include "algorithm"
 // #include "algorithm"
@@ -19,12 +20,17 @@ Core::Core( std::string name, double const h, double const w ) : window{sf::Vide
     // window(sf::VideoMode(h, w), "Collisions");
 }
 void Core::mouse_movement(){
-    if(dynamic_cast<GJK*>(algth) != nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+    if(dynamic_cast<AABB*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
         delete_shapes();
         initialize(0);
     }
 
-    if(dynamic_cast<AABB*>(algth) != nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::G)){
+    if(dynamic_cast<SAT*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+        delete_shapes();
+        initialize(1);
+    }
+
+    if(dynamic_cast<GJK*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::G)){
         delete_shapes();
         initialize(2);
     }
@@ -152,7 +158,35 @@ void Core::AABB_init(){
 
 // Default initialization of SAT case scenario
 void Core::SAT_init(){
+    sf::ConvexShape* shape_1 = new sf::ConvexShape();
+    shape_1->setPointCount(5);
+    shape_1->setPoint(0, sf::Vector2f(200, 50));
+    shape_1->setPoint(1, sf::Vector2f(340, 155));
+    shape_1->setPoint(2, sf::Vector2f(300, 350));
+    shape_1->setPoint(3, sf::Vector2f(100,   350));
+    shape_1->setPoint(4, sf::Vector2f(50,  150));
+    shape_1->setFillColor(sf::Color::Green);
+    shape_1->setOutlineColor(sf::Color::White);
+    shape_1->setOutlineThickness(5);
+    shape_1->setPosition(300, 300);
 
+    sf::ConvexShape* shape_2 = new sf::ConvexShape();
+    shape_2->setPointCount(6);
+    shape_2->setPoint(0, sf::Vector2f(150, 50));
+    shape_2->setPoint(1, sf::Vector2f(300, 50));
+    shape_2->setPoint(2, sf::Vector2f(400, 200));
+    shape_2->setPoint(3, sf::Vector2f(300, 350));
+    shape_2->setPoint(4, sf::Vector2f(150, 350));
+    shape_2->setPoint(5, sf::Vector2f(50,  200));
+    shape_2->setFillColor(sf::Color::Blue);
+    shape_2->setOutlineColor(sf::Color::White);
+    shape_2->setOutlineThickness(5);
+    shape_2->setPosition(350, 200);
+
+    shapes.emplace_back(shape_1);
+    shapes.emplace_back(shape_2);
+
+    algth = new SAT();
 }
 
 // Default initialization of GJK case scenario

@@ -25,8 +25,8 @@ endef
 ##################################
 
 APP 		:= collisions
-CCFLAGS 	:= -Wall -pedantic
-CFLAGS		:= $(CCFLAGS)-std=c++20
+CCFLAGS 	:= -Wall -pedantic -std=c++20
+CFLAGS		:= $(CCFLAGS)
 CC			:= g++
 C			:= gcc
 MKDIR		:= mkdir -p # Create sub-folders in one shot
