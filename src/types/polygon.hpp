@@ -2,19 +2,42 @@
 
 #include <stdint.h>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 #include "vector2r.hpp"
 #include "precision.h"
 
-namespace sf{ struct Shape; }
 
 namespace CDP{
 
 struct Polygon{
-    bool fill(sf::Shape const* s);
-    
-    uint16_t n_vertices{};
-    std::vector<Vector2r> vertices;
-    Vector2r position{};
+    Polygon() = default;
+    Polygon(sf::ConvexShape const&);
+
+    sf::ConvexShape const& getShape() const;
+    int                 getVertexCount() const;
+    Vector2r            getCenter() const;
+    Vector2r            getVertex(int) const;
+    Vector2r            getLocalVertex(int) const;
+    Vector2r            getPosition() const;
+    void                setPosition(Vector2r const&);
+    real                getBorder() const;
+    void                setBorder(real const& b);
+    sf::Color const&    getColor() const;
+    void                setColor(sf::Color const&);
+    sf::Color const&    getBorderColor() const;
+    void                setBorderColor(sf::Color const&);
+
+    bool fill(sf::ConvexShape const& s);
+    bool fill();
+    void assign(sf::ConvexShape const& s);
+    void update();
+
+
+    private:
+        uint16_t n_vertices{};
+        std::vector<Vector2r> vertices;
+        Vector2r position{};
+        sf::ConvexShape shape;
 };
 } // namespace CDP

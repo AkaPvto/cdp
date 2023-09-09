@@ -1,14 +1,15 @@
-#include <SFML/Graphics.hpp>
-#include "algorithm/algorithm.hpp"
 #include <vector>
 #include <string>
+#include <SFML/Graphics.hpp>
 
+#include "types/polygon.hpp"
+#include "algorithm/algorithm.hpp"
 
 #define WINDOW_PERCENTAGE 0.8
 
 
 namespace CDP{
-using ShapesArray = std::vector<sf::Shape*>;
+using PolygonArray = std::vector<Polygon>;
 
 
 struct Core{
@@ -27,7 +28,7 @@ struct Core{
     void GJK_init();
     private:
         sf::RenderWindow window;
-        ShapesArray shapes;
+        PolygonArray polygons;
         double const height{};
         double const width{};
         // Static array. Contains pointer to functions for different scenarios initialization
