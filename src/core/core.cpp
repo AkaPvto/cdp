@@ -16,7 +16,8 @@
 namespace CDP{
 
 // Constructor of the class
-Core::Core( std::string name, double const h, double const w ) : window{sf::VideoMode(w, h), name}, height{h}, width{w}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init} {
+Core::Core( std::string name, double const h, double const w ) : 
+window{sf::VideoMode(w, h), name}, height{h}, width{w}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init} {
     // window(sf::VideoMode(h, w), "Collisions");
 }
 void Core::mouse_movement(){
@@ -96,9 +97,6 @@ void Core::draw(){
 }
 
 void Core::delete_shapes(){
-    // for(Polygon const& s : polygons){
-    //    delete(s);
-    // }
     polygons.clear();
 
     if(algth != nullptr){ delete(algth); algth = nullptr;}
@@ -106,50 +104,28 @@ void Core::delete_shapes(){
 
 // Uses the initialization function indicated by param from the static array
 void Core::initialize(uint32_t const type){
-    // (this->*initialize_types[type])();
-    switch(type){
-        case 0:
-            AABB_init();
-            break;
-        case 1:
-            SAT_init();
-            break;
-        case 2:
-            GJK_init();
-            break;
-        default:
-            break;
-    }
+    (this->*initialize_types.at(type))();
 }
 
 // ### Initialization functions ###
 
 // Default initialization of AABB case scenario
 void Core::AABB_init(){
-    sf::ConvexShape shape_1;
-    shape_1.setPointCount(4);
-    shape_1.setPoint(0, sf::Vector2f(0,   0));
-    shape_1.setPoint(1, sf::Vector2f(200, 0));
-    shape_1.setPoint(2, sf::Vector2f(200, 330));
-    shape_1.setPoint(3, sf::Vector2f(0,   330));
-    shape_1.setFillColor(sf::Color::Green);
-    shape_1.setOutlineColor(sf::Color::White);
-    shape_1.setOutlineThickness(5);
-    shape_1.setPosition(300, 300);
+    std::vector<Vector2r> p1_vertices{{0,0}, {200,0}, {200,330},{0,330}};
+    Polygon p1(p1_vertices, {300,300});
+    p1.setColor(sf::Color::Green);
+    p1.setBorder(5);
+    p1.setBorderColor(sf::Color::White);
 
-    sf::ConvexShape shape_2;
-    shape_2.setPointCount(4);
-    shape_2.setPoint(0, sf::Vector2f(0,   0));
-    shape_2.setPoint(1, sf::Vector2f(300, 0));
-    shape_2.setPoint(2, sf::Vector2f(300, 200));
-    shape_2.setPoint(3, sf::Vector2f(0,   200));
-    shape_2.setFillColor(sf::Color::Blue);
-    shape_2.setOutlineColor(sf::Color::White);
-    shape_2.setOutlineThickness(5);
-    shape_2.setPosition(350, 200);
+    std::vector<Vector2r> p2_vertices{{0,0}, {300,0}, {300,200}, {0,200}};
+    Polygon p2(p2_vertices, {350,200});
+    p2.setColor(sf::Color::Blue);
+    p2.setBorder(5);
+    p2.setBorderColor(sf::Color::White);
 
-    polygons.emplace_back(shape_1);
-    polygons.emplace_back(shape_2);
+
+    polygons.emplace_back(p1);
+    polygons.emplace_back(p2);
 
     algth = new AABB();
 
@@ -166,65 +142,42 @@ void Core::AABB_init(){
 
 // Default initialization of SAT case scenario
 void Core::SAT_init(){
-    sf::ConvexShape shape_1;
-    shape_1.setPointCount(5);
-    shape_1.setPoint(0, sf::Vector2f(200, 50));
-    shape_1.setPoint(1, sf::Vector2f(340, 155));
-    shape_1.setPoint(2, sf::Vector2f(300, 350));
-    shape_1.setPoint(3, sf::Vector2f(100,   350));
-    shape_1.setPoint(4, sf::Vector2f(50,  150));
-    shape_1.setFillColor(sf::Color::Green);
-    shape_1.setOutlineColor(sf::Color::White);
-    shape_1.setOutlineThickness(5);
-    shape_1.setPosition(300, 300);
+    std::vector<Vector2r> p1_vertices{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
+    Polygon p1(p1_vertices, {300,300});
+    p1.setColor(sf::Color::Green);
+    p1.setBorder(5);
+    p1.setBorderColor(sf::Color::White);
 
-    sf::ConvexShape shape_2;
-    shape_2.setPointCount(6);
-    shape_2.setPoint(0, sf::Vector2f(150, 50));
-    shape_2.setPoint(1, sf::Vector2f(300, 50));
-    shape_2.setPoint(2, sf::Vector2f(400, 200));
-    shape_2.setPoint(3, sf::Vector2f(300, 350));
-    shape_2.setPoint(4, sf::Vector2f(150, 350));
-    shape_2.setPoint(5, sf::Vector2f(50,  200));
-    shape_2.setFillColor(sf::Color::Blue);
-    shape_2.setOutlineColor(sf::Color::White);
-    shape_2.setOutlineThickness(5);
-    shape_2.setPosition(350, 200);
+    std::vector<Vector2r> p2_vertices{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
+    Polygon p2(p2_vertices, {350,200});
+    p2.setColor(sf::Color::Blue);
+    p2.setBorder(5);
+    p2.setBorderColor(sf::Color::White);
 
-    polygons.emplace_back(shape_1);
-    polygons.emplace_back(shape_2);
+
+    polygons.emplace_back(p1);
+    polygons.emplace_back(p2);
 
     algth = new SAT();
 }
 
 // Default initialization of GJK case scenario
 void Core::GJK_init(){
-    sf::ConvexShape shape_1;
-    shape_1.setPointCount(5);
-    shape_1.setPoint(0, sf::Vector2f(50,   0));
-    shape_1.setPoint(1, sf::Vector2f(300, 0));
-    shape_1.setPoint(2, sf::Vector2f(300, 200));
-    shape_1.setPoint(3, sf::Vector2f(50,   200));
-    shape_1.setPoint(4, sf::Vector2f(0,   100));
-    
-    shape_1.setFillColor(sf::Color::Green);
-    shape_1.setOutlineColor(sf::Color::White);
-    shape_1.setOutlineThickness(5);
-    shape_1.setPosition(300, 300);
+    std::vector<Vector2r> p1_vertices{{50,0}, {300,0}, {300,200}, {50,200}, {0,100}};
+    Polygon p1{p1_vertices, {300,300}};
+    p1.setColor(sf::Color::Green);
+    p1.setBorder(5);
+    p1.setBorderColor(sf::Color::White);
 
-    sf::ConvexShape shape_2;
-    shape_2.setPointCount(4);
-    shape_2.setPoint(0, sf::Vector2f(0,   0));
-    shape_2.setPoint(1, sf::Vector2f(200, 0));
-    shape_2.setPoint(2, sf::Vector2f(200, 330));
-    shape_2.setPoint(3, sf::Vector2f(0,   330));
-    shape_2.setFillColor(sf::Color::Blue);
-    shape_2.setOutlineColor(sf::Color::White);
-    shape_2.setOutlineThickness(5);
-    shape_2.setPosition(350, 200);
+    std::vector<Vector2r> p2_vertices{{0,0}, {200,0}, {200,330}, {0,330}};
+    Polygon p2(p2_vertices, {350,200});
+    p2.setColor(sf::Color::Blue);
+    p2.setBorder(5);
+    p2.setBorderColor(sf::Color::White);
 
-    polygons.emplace_back(shape_1);
-    polygons.emplace_back(shape_2);
+
+    polygons.emplace_back(p1);
+    polygons.emplace_back(p2);
 
     algth = new GJK();
 }

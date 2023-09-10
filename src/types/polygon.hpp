@@ -13,12 +13,14 @@ namespace CDP{
 struct Polygon{
     Polygon() = default;
     Polygon(sf::ConvexShape const&);
+    Polygon(std::vector<Vector2r> const&, Vector2r const&);
 
     sf::ConvexShape const& getShape() const;
     int                 getVertexCount() const;
     Vector2r            getCenter() const;
     Vector2r            getVertex(int) const;
     Vector2r            getLocalVertex(int) const;
+    void                setVertices(std::vector<Vector2r> const&);
     Vector2r            getPosition() const;
     void                setPosition(Vector2r const&);
     real                getBorder() const;
@@ -38,6 +40,6 @@ struct Polygon{
         uint16_t n_vertices{};
         std::vector<Vector2r> vertices;
         Vector2r position{};
-        sf::ConvexShape shape;
+        sf::ConvexShape shape{};
 };
 } // namespace CDP

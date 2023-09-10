@@ -8,6 +8,13 @@ Polygon::Polygon(sf::ConvexShape const& s) : shape{s}{
     fill();
 }
 
+// Constructing a polygon with an array of vertices and a position
+Polygon::Polygon(std::vector<Vector2r> const& _vertices, Vector2r const& _pos) : position{_pos}{
+    setVertices(_vertices);
+    update();
+}
+
+
 // Getters and setters
 sf::ConvexShape const& Polygon::getShape() const{
     return shape;
@@ -38,6 +45,14 @@ Vector2r Polygon::getLocalVertex(int index) const{
     if(index > n_vertices) return {-1,-1};
 
     return vertices.at(index);
+}
+
+void Polygon::setVertices(std::vector<Vector2r> const& verts){
+    if(verts.size() <=0 ) return;
+
+    vertices = verts;
+    n_vertices = verts.size();
+    update();
 }
 
 Vector2r Polygon::getPosition() const{
