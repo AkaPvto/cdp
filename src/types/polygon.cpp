@@ -123,5 +123,20 @@ bool Polygon::fill(sf::ConvexShape const& s){
     return true;
 }
 
+std::vector<Vector2r>::iterator Polygon::begin(){
+    return vertices.begin();
+}
+
+std::vector<Vector2r>::iterator Polygon::end(){
+    return vertices.end();
+}
+
+std::vector<Vector2r>::const_iterator Polygon::begin() const{
+    return vertices.begin();
+}
+
+std::vector<Vector2r>::const_iterator Polygon::end() const{
+    return vertices.end();
+}
 
 } // namespace CDP

@@ -17,6 +17,10 @@ Vector2r Vector2r::operator-=(Vector2r const& v){
     return Vector2r{ .x = this->x - v.x, .y = this->y - v.y};
 }
 
+Vector2r Vector2r::operator-() const{
+    return Vector2r{-x, -y};
+}
+
 real Vector2r::operator*=(Vector2r const& v){
     return (*this)*v;
 }

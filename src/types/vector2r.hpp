@@ -7,6 +7,7 @@ struct Vector2r{
     Vector2r& operator=(Vector2r const& v);
     Vector2r operator+=(Vector2r const& v);
     Vector2r operator-=(Vector2r const& v);
+    Vector2r operator-() const;
     real operator*=(Vector2r const& v);
     Vector2r getNormal();
     real getSquaredMagnitud();

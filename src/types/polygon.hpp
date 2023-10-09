@@ -35,6 +35,11 @@ struct Polygon{
     void assign(sf::ConvexShape const& s);
     void update();
 
+    std::vector<Vector2r>::iterator Polygon::begin();
+    std::vector<Vector2r>::iterator Polygon::end();
+    std::vector<Vector2r>::const_iterator Polygon::begin() const;
+    std::vector<Vector2r>::const_iterator Polygon::end() const;
+
 
     private:
         uint16_t n_vertices{};
