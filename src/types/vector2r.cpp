@@ -9,20 +9,26 @@ Vector2r& Vector2r::operator=(Vector2r const& v){
     return *this;
 }
 
-Vector2r Vector2r::operator+=(Vector2r const& v){
-    return Vector2r{ .x = this->x + v.x, .y = this->y + v.y};
+Vector2r& Vector2r::operator+=(Vector2r const& v){
+    this->x += v.x;
+    this->y += v.y;
+    return *this; 
 }
 
-Vector2r Vector2r::operator-=(Vector2r const& v){
-    return Vector2r{ .x = this->x - v.x, .y = this->y - v.y};
+Vector2r& Vector2r::operator-=(Vector2r const& v){
+    this->x -= v.x;
+    this->y -= v.y;
+    return *this; 
+}
+    
+Vector2r& Vector2r::operator*=(real const& r){
+    this->x *= r;
+    this->y *= r;
+    return *this;
 }
 
 Vector2r Vector2r::operator-() const{
     return Vector2r{-x, -y};
-}
-
-real Vector2r::operator*=(Vector2r const& v){
-    return (*this)*v;
 }
 
 Vector2r Vector2r::getNormal(){
@@ -57,5 +63,14 @@ Vector2r operator-(Vector2r const& v1, Vector2r const& v2){
 real operator*(Vector2r const& v1, Vector2r const& v2){
     return v1.x*v2.x + v1.y*v2.y;
 }
+
+Vector2r operator*(Vector2r const& v, real const& r){
+    return Vector2r{v.x*r, v.y*r};
+}
+
+Vector2r operator*(real const& r, Vector2r const& v){
+    return Vector2r{v.x*r, v.y*r};
+}
+
 
 } // namespace CDP

@@ -12,6 +12,9 @@
 // #include "algorithm"
 // #include "algorithm"
 
+sf::Color const green(33, 184, 49,255);
+sf::Color const blue(72, 191, 191, 255);
+sf::Color const red(205,70,56,255);
 
 namespace CDP{
 
@@ -68,12 +71,12 @@ void Core::run(){
 void Core::check_collision(){    
     if(algth != nullptr){
         if(algth->colide(polygons[0], polygons[1])){
-            polygons[0].setColor(sf::Color::Red);
-            polygons[1].setColor(sf::Color::Red);
+            polygons[0].setColor(red);
+            polygons[1].setColor(red);
         }
         else{
-            polygons[0].setColor(sf::Color::Green);
-            polygons[1].setColor(sf::Color::Blue);
+            polygons[0].setColor(green);
+            polygons[1].setColor(blue);
         }
     }
 }
@@ -113,13 +116,13 @@ void Core::initialize(uint32_t const type){
 void Core::AABB_init(){
     std::vector<Vector2r> p1_vertices{{0,0}, {200,0}, {200,330},{0,330}};
     Polygon p1(p1_vertices, {300,300});
-    p1.setColor(sf::Color::Green);
+    p1.setColor(green);
     p1.setBorder(5);
     p1.setBorderColor(sf::Color::White);
 
     std::vector<Vector2r> p2_vertices{{0,0}, {300,0}, {300,200}, {0,200}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(sf::Color::Blue);
+    p2.setColor(blue);
     p2.setBorder(5);
     p2.setBorderColor(sf::Color::White);
 
@@ -144,13 +147,13 @@ void Core::AABB_init(){
 void Core::SAT_init(){
     std::vector<Vector2r> p1_vertices{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
     Polygon p1(p1_vertices, {300,300});
-    p1.setColor(sf::Color::Green);
+    p1.setColor(green);
     p1.setBorder(5);
     p1.setBorderColor(sf::Color::White);
 
     std::vector<Vector2r> p2_vertices{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(sf::Color::Blue);
+    p2.setColor(blue);
     p2.setBorder(5);
     p2.setBorderColor(sf::Color::White);
 
@@ -165,20 +168,20 @@ void Core::SAT_init(){
 void Core::GJK_init(){
     std::vector<Vector2r> p1_vertices{{50,0}, {300,0}, {300,200}, {50,200}, {0,100}};
     Polygon p1{p1_vertices, {300,300}};
-    p1.setColor(sf::Color::Green);
-    p1.setBorder(5);
-    p1.setBorderColor(sf::Color::White);
+    p1.setColor(green);
+    // p1.setBorder(5);
+    // p1.setBorderColor(sf::Color::White);
 
     std::vector<Vector2r> p2_vertices{{0,0}, {200,0}, {200,330}, {0,330}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(sf::Color::Blue);
-    p2.setBorder(5);
-    p2.setBorderColor(sf::Color::White);
+    p2.setColor(blue);
+    // p2.setBorder(5);
+    // p2.setBorderColor(sf::Color::White);
 
 
     polygons.emplace_back(p1);
     polygons.emplace_back(p2);
-
+    
     algth = new GJK();
 }
 

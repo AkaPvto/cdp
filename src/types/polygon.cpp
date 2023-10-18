@@ -47,6 +47,13 @@ Vector2r Polygon::getLocalVertex(int index) const{
     return vertices.at(index);
 }
 
+
+void Polygon::setVertex(Vector2r const& v, int index){
+    if(index > n_vertices) return;
+
+    vertices.at(index) = v;
+}
+
 void Polygon::setVertices(std::vector<Vector2r> const& verts){
     if(verts.size() <=0 ) return;
 

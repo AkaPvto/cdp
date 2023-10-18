@@ -3,6 +3,11 @@
 namespace CDP{
 
 struct GJK : Algorithm{
+    struct Vector3r{ 
+        real x{}, y{}, z{}; 
+        // Cross product
+    };
+    
     struct Simplex{
         std::array<Vector2r, 3> vertices{};
         uint8_t size{};
@@ -18,6 +23,22 @@ struct GJK : Algorithm{
 
     bool colide(Polygon const&, Polygon const&);
     Vector2r getFurtherVertex(Polygon const& , Vector2r const&);
-    Vector2r supportPoint(Polygon const&, Polygon const&, Vector2r const&);
+    Vector2r getSupportPoint(Polygon const&, Polygon const&, Vector2r const&);
+
+    Vector3r toVector3r(Vector2r const&) const;
+    Vector2r toVector2r(Vector3r const&) const;
+
+    bool updateSimplex(Simplex& s, Vector2r& direction);
+    bool onedimensional(Simplex&, Vector2r&);
+    bool bidimensional(Simplex&, Vector2r&);
+    // bool tridimensional(Simplex&, Vector2r&);
+    bool similarDirection(Vector2r const&, Vector2r const&);
+    
+    // typedef bool(GJK::*gjk_func)(Simplex&, Vector2r&);
+    // std::array<gjk_func, 2> updateSimplex{onedimensional, bidimensional};
 };
+
+// Cross product operator for Vector3r class
+GJK::Vector3r operator%(GJK::Vector3r const& v1, GJK::Vector3r const& v2);
+
 } // namespace CDP

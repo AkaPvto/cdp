@@ -20,6 +20,7 @@ struct Polygon{
     Vector2r            getCenter() const;
     Vector2r            getVertex(int) const;
     Vector2r            getLocalVertex(int) const;
+    void                setVertex(Vector2r const& v, int index);
     void                setVertices(std::vector<Vector2r> const&);
     Vector2r            getPosition() const;
     void                setPosition(Vector2r const&);
@@ -35,10 +36,10 @@ struct Polygon{
     void assign(sf::ConvexShape const& s);
     void update();
 
-    std::vector<Vector2r>::iterator Polygon::begin();
-    std::vector<Vector2r>::iterator Polygon::end();
-    std::vector<Vector2r>::const_iterator Polygon::begin() const;
-    std::vector<Vector2r>::const_iterator Polygon::end() const;
+    std::vector<Vector2r>::iterator         begin();
+    std::vector<Vector2r>::iterator         end();
+    std::vector<Vector2r>::const_iterator   begin() const;
+    std::vector<Vector2r>::const_iterator   end() const;
 
 
     private:

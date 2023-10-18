@@ -5,10 +5,10 @@ struct Vector2r{
     real x{},y{};
 
     Vector2r& operator=(Vector2r const& v);
-    Vector2r operator+=(Vector2r const& v);
-    Vector2r operator-=(Vector2r const& v);
+    Vector2r& operator+=(Vector2r const& v);
+    Vector2r& operator-=(Vector2r const& v);
+    Vector2r& operator*=(real const& r);
     Vector2r operator-() const;
-    real operator*=(Vector2r const& v);
     Vector2r getNormal();
     real getSquaredMagnitud();
     real getMagnitud();
@@ -18,5 +18,8 @@ struct Vector2r{
 Vector2r operator+(Vector2r const& v1, Vector2r const& v2);
 Vector2r operator-(Vector2r const& v1, Vector2r const& v2);
 real operator*(Vector2r const& v1, Vector2r const& v2);
+Vector2r operator*(Vector2r const&, real const& r);
+Vector2r operator*(real const& r, Vector2r const&);
+
 
 } // namespace CDP
