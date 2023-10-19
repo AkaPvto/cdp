@@ -62,6 +62,7 @@ void Core::run(){
         mouse_movement();
         check_collision();
         window.clear();
+        draw_collision();
         draw();
         window.display();       
     }
@@ -81,20 +82,18 @@ void Core::check_collision(){
     }
 }
 
+void Core::draw_collision(){
+    auto size = window.getSize();
+    DrawList draw_l{};
+    algth->draw(draw_l, polygons[0], polygons[1], size.x, size.y);
+    for(auto drawable : draw_l){
+        if(drawable == nullptr) continue;
+        window.draw(*drawable);
+    }
+}
+
 void Core::draw(){
-    // int sign = -1;
     for(Polygon const& s : polygons){
-        // int new_X = s->getPosition().x + 1*sign;
-        // if(new_X > width) new_X = 0;
-        // else if(new_X < 0) new_X = width;
-
-        // int new_Y = s->getPosition().y + 1*sign;
-        // if(new_Y > height) new_Y = 0;
-        // else if(new_Y < 0) new_Y = height;
-
-        // s->setPosition(new_X, new_Y);
-        // sign*=sign;
-
         window.draw(s.getShape());
     }
 }

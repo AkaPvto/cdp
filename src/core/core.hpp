@@ -5,7 +5,7 @@
 #include "types/polygon.hpp"
 #include "algorithm/algorithm.hpp"
 
-#define WINDOW_PERCENTAGE 0.8
+#define WINDOW_PERCENTAGE 0.9
 
 
 namespace CDP{
@@ -20,6 +20,7 @@ struct Core{
     void run();
     void mouse_movement();
     void check_collision();
+    void draw_collision();
     void draw();
     void delete_shapes();
     void initialize(uint32_t const);

@@ -1,5 +1,7 @@
 #include "gjk.hpp"
 #include <iostream>
+#include <SFML/Graphics.hpp>
+
 
 namespace CDP{
     
@@ -149,6 +151,11 @@ bool GJK::bidimensional(Simplex& s, Vector2r& direction){
 // returns true if it's less than 90 degrees, false otherwise
 bool GJK::similarDirection(Vector2r const& v1, Vector2r const& v2){
     return v1*v2 > 0;
+}
+
+
+void GJK::draw(DrawList& draw_l, Polygon const& p1, Polygon const& p2, int window_w, int window_h){
+
 }
 
 

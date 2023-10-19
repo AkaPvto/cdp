@@ -36,6 +36,9 @@ struct GJK : Algorithm{
     
     // typedef bool(GJK::*gjk_func)(Simplex&, Vector2r&);
     // std::array<gjk_func, 2> updateSimplex{onedimensional, bidimensional};
+
+    void draw(DrawList&, Polygon const&, Polygon const&, int, int);
+
 };
 
 // Cross product operator for Vector3r class

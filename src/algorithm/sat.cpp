@@ -1,5 +1,7 @@
 #include "sat.hpp"
 #include <iostream>
+#include <SFML/Graphics.hpp>
+
 
 namespace CDP{
     
@@ -53,5 +55,11 @@ SAT::Intersection SAT::proyection(Vector2r const& axis, Polygon const& p){
     }
 
     return intr;
+}
+
+void SAT::draw(DrawList& draw_l, Polygon const& p1, Polygon const& p2, int window_w, int window_h){
+
+
+
 }
 } // namespace CDP

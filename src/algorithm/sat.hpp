@@ -11,5 +11,7 @@ struct SAT : Algorithm{
     bool colide(Polygon const&, Polygon const&);
     bool axis_col(Vector2r const& axis, Polygon const& p1, Polygon const& p2);
     Intersection proyection(Vector2r const& axis, Polygon const& p);
+
+    void draw(DrawList&, Polygon const&, Polygon const&, int, int);
 };
 } // namespace CDP
