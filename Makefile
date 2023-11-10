@@ -34,7 +34,7 @@ SRC			:= src
 OBJ			:= obj
 LIBDIR		:= lib
 LIBBINDIR	:= $(LIBDIR)/binlibs
-ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libsfml-graphics.so.2.5 $(LIBBINDIR)/libsfml-system.so.2.5 $(LIBBINDIR)/libsfml-window.so.2.5
+ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libsfml-graphics.so.2.5 $(LIBBINDIR)/libsfml-system.so.2.5 $(LIBBINDIR)/libsfml-window.so.2.5 $(LIBBINDIR)/libimgui.a $(LIBBINDIR)/libglfw.so.3 $(LIBBINDIR)/libglad.a $(LIBBINDIR)/libimgui-sfml.a
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
 LIBS		:= -Llib $(ALLBINLIBS) -Wl,-rpath=lib/

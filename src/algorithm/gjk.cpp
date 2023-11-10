@@ -6,27 +6,36 @@
 namespace CDP{
     
 bool GJK::colide(Polygon const& p1, Polygon const& p2){
+    // Get initial support point
     Vector2r supp = getSupportPoint(p1, p2, Vector2r{1,0});
+
+    // Initialize the simplex first vertex with the support point
     Simplex splx{};
     splx.push_first(supp);
 
-    Vector2r direction = -supp;
+    // The new search direction will be towards the (0, 0)
+    Vector2r searchDirection = -supp;
 
+    // Get the second support point to form a Line
+    // Line is the lower Simplex possible, from here we can iterate
+    supp = getSupportPoint(p1, p2, searchDirection);
     
-    while(true){
-        supp = getSupportPoint(p1, p2, direction);
+    // Insert the second support point into the Simplex to make a Line
+    splx.push_first(supp);
 
-        if(supp*direction <= 0)
-            return false;
-
-        splx.push_first(supp);
-
+    // If the new support point is in the opposite direction of the search direction
+    // Means that we tried to look up for points in the direction of the (0, 0) but the further point doesn't reach it
+    // Thus the polygons don't collide
+    while(similarDirection(supp, searchDirection)){
         
-        // if((this->*updateSimplex.at(splx.getSize()))(splx, direction))
+        // If the full simplex processing logic returns true, we found a Simplex containing (0 ,0)
+        if(updateSimplex(splx, searchDirection)) return true;
 
-        if(updateSimplex(splx, direction)){
-            return true;
-        }
+        // Otherwise, search for new point and go next iteration
+        supp = getSupportPoint(p1, p2, searchDirection);
+    
+        // Insert the support point into the Simplex
+        splx.push_first(supp);
     }
     return false;
 }
