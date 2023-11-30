@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <array>
-#include <imgui-sfml/imgui-SFML.h>
-#include <imgui/imgui.h>
 
 #include "algorithm/aabb.hpp"
 #include "algorithm/gjk.hpp"
@@ -54,26 +52,17 @@ void Core::run(){
     sf::Color(26);
     initialize(0);
     
-    sf::Clock deltaClock;
     while(window.isOpen()){
         sf::Event event;
         while(window.pollEvent(event)){
-            ImGui::SFML::ProcessEvent(event);
             if(event.type == sf::Event::Closed) window.close();
         }
-        ImGui::SFML::Update(window, deltaClock.restart());
-
-        ImGui::Begin("Window Tittle");
-        ImGui::Text("Window text!");
-        ImGui::End();
-
 
         mouse_movement();
         check_collision();
         window.clear();
         draw_collision();
         draw();
-        ImGui::SFML::Render(window);
         window.display();       
     }
     delete_shapes();
