@@ -6,11 +6,13 @@
 
 #include "vector2r.hpp"
 #include "precision.h"
+#include "drawable.hpp"
+#include "color.hpp"
 
 
 namespace CDP{
 
-struct Polygon{
+struct Polygon : Drawable{
     Polygon() = default;
     Polygon(sf::ConvexShape const&);
     Polygon(std::vector<Vector2r> const&, Vector2r const&);
@@ -30,6 +32,7 @@ struct Polygon{
     void                setColor(sf::Color const&);
     sf::Color const&    getBorderColor() const;
     void                setBorderColor(sf::Color const&);
+    void                draw(RenderStorage const&);
 
     bool fill(sf::ConvexShape const& s);
     bool fill();
@@ -46,6 +49,7 @@ struct Polygon{
         uint16_t n_vertices{};
         std::vector<Vector2r> vertices;
         Vector2r position{};
+        Color color{};
         sf::ConvexShape shape{};
 };
 } // namespace CDP

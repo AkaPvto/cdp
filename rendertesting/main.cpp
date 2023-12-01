@@ -124,7 +124,7 @@ int main(){
     //     0.5f, -0.5f * float(sqrt(3)) / 3,      red.r_f, red.g_f, red.b_f, red.a_f,
     //     0.0f, 0.5f * float(sqrt(3)) *2 / 3,    red.r_f, red.g_f, red.b_f, red.a_f
     // };
-    GLuint last_vertex_num = 0;
+    GLuint last_index = 0;
     std::vector<GLfloat> vertices;
     // GLfloat vertices[] = {
     //     -0.5f, -0.5f * float(sqrt(3)) / 3,     red.r_f, red.g_f, red.b_f, red.a_f,
@@ -156,13 +156,13 @@ int main(){
                 vertices.push_back(p.color.b_f);
                 vertices.push_back(p.color.a_f);
             }
-            for(size_t i = last_vertex_num+1; i<(last_vertex_num+p.vertices.size()-1); ++i){
-                index_buff.push_back(last_vertex_num);
+            for(size_t i = last_index+1; i<(last_index+p.vertices.size()-1); ++i){
+                index_buff.push_back(last_index);
                 index_buff.push_back(i);
                 index_buff.push_back(i+1);
             }
 
-            last_vertex_num += p.vertices.size(); 
+            last_index += p.vertices.size(); 
         }
 
     };
@@ -306,89 +306,121 @@ int main(){
 
 
 
-// void init(){
-//     // GLFW initialization values/flags
-//     glfwInit();
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+void init(){
+    // GLFW initialization values/flags
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-//     // Window creation
-//     // CHANGE WINDOW TO AN ATTRIBUTE
-//     GLFWwindow* window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
-//     if(window == NULL){
-//         std::cout << "Window could not be created!\n"; 
-//         glfwTerminate();
-//     }
-//     glfwMakeContextCurrent(window);
-
-
-//     // ImGui initialization and link with the window
-//     IMGUI_CHECKVERSION();
-//     ImGui::CreateContext();
-//     ImGuiIO& io = ImGui::GetIO();
-//     ImGui_ImplGlfw_InitForOpenGL(window, true);
-//     ImGui_ImplOpenGL3_Init("#version 130");
-//     ImGui::StyleColorsDark();
-
-//     // Glad initialization and configuration
-//     gladLoadGL();
-
-//     glViewport(0, 0, 1280, 720);
-
-// }
-
-// void drawAll(){
-//     glUseProgram(shaderProgram);
-//     glBindVertexArray(VAO);
-//     glDrawArrays(GL_TRIANGLES, 0, 3);
-// }
-
-// void draw(){
-
-// }
-
-// void drawUI(){
-//     ImGui_ImplOpenGL3_NewFrame();
-//     ImGui_ImplGlfw_NewFrame();
-//     ImGui::NewFrame();
-
-//     ImGui::Begin("Window Tittle");
-//     ImGui::Text("Window text!");
-//     ImGui::End();
-
-//     ImGui::Render();
-//     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-// }
-
-// void render(){
-//     // Draw the background
-//     glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
-//     glClear(GL_COLOR_BUFFER_BIT);   
-
-//     // Draw all the polygons
-//     // This function will draw all the polygons storaged in the class
-//     drawAll();
-
-//     // Draw the interface
-//     // This function will execute all the logic behind the UI
-//     drawUI();
+    // Window creation
+    // CHANGE WINDOW TO AN ATTRIBUTE
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
+    if(window == NULL){
+        std::cout << "Window could not be created!\n"; 
+        glfwTerminate();
+    }
+    glfwMakeContextCurrent(window);
 
 
-//     // Swap the buffer and call the events at the end of the render iteration
-//     glfwSwapBuffers(window);
-//     glfwPollEvents();
-// }
+    // ImGui initialization and link with the window
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui::StyleColorsDark();
 
-// void end(){
-//     // IMPLEMENT THIS LATER
-//     // // Delete all the vertex objects and the shader program
-//     // glDeleteBuffers(1, &VBO);
-//     // glDeleteVertexArrays(1, &VAO);
-//     // glDeleteProgram(shaderProgram);
+    // Glad initialization and configuration
+    gladLoadGL();
+
+    glViewport(0, 0, 1280, 720);
+
+}
+
+void drawAll(){
+    shader_P.use();
+    vao.bind();
+
+    glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
+}
+
+void draw_polygon(){
+    // Process the given data into the vertices and index_buff arrays
+
+
+}
+
+struct RenderStorage{
+    RenderStorage(std::vector<GLfloat>& _v, std::vector<GLuint>& _ib, uint32_t& _li) : vertices{_v}, index_buff{_ib}, last_index{_li}{}
+    RenderStorage() = delete;
+    std::vector<GLfloat>& vertices;
+    std::vector<GLuint>& index_buff;
+    uint32_t& last_index;
+};
+
+
+
+template <typename T>
+void draw(T const& drawable){
+    drawable.draw(RenderStorage(vertices, index_buff, last_index));
+
+}
+
+void insert(){
+    // Insert and configure the data
+    vao.bind();
+
+    vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
+}
+
+
+void drawUI(){
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Window Tittle");
+    ImGui::Text("Window text!");
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void render(){
+    // Draw the background
+    glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
+    glClear(GL_COLOR_BUFFER_BIT);   
+
+    // Draw all the polygons
+    // This function will draw all the polygons storaged in the class
+    drawAll();
+
+    // Draw the interface
+    // This function will execute all the logic behind the UI
+    drawUI();
+
+
+    // Swap the buffer and call the events at the end of the render iteration
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
+void end(){
+    // IMPLEMENT THIS LATER
+    // // Delete all the vertex objects and the shader program
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteProgram(shaderProgram);
     
 
-//     // // Delete the glfw window
-//     // glfwDestroyWindow(window);
-//     // glfwTerminate();
-// }
+    // // Delete the glfw window
+    // glfwDestroyWindow(window);
+    // glfwTerminate();
+}

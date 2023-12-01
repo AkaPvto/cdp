@@ -95,6 +95,26 @@ void Polygon::setBorderColor(sf::Color const& color){
     shape.setOutlineColor(color);
 }
 
+void Polygon::draw(RenderStorage const& storage){
+    for(auto v : this->vertices){
+        storage.vertices.push_back(v.x);
+        storage.vertices.push_back(v.y);
+        storage.vertices.push_back(color.r_f);
+        storage.vertices.push_back(color.g_f);
+        storage.vertices.push_back(color.b_f);
+        storage.vertices.push_back(color.a_f);
+    }
+    size_t teselation_index = storage.last_index + this->vertices.size() - 1;
+    for(size_t i = storage.last_index+1; i< teselation_index; ++i){
+        storage.index_buff.push_back(storage.last_index);
+        storage.index_buff.push_back(i);
+        storage.index_buff.push_back(i+1);
+    }
+
+    storage.last_index += vertices.size(); 
+}
+
+
 // Updates the value of the sf::Shape based on the polygon
 void Polygon::update(){
     shape.setPosition({position.x, position.y});

@@ -9,12 +9,19 @@
 #include "algorithm/gjk.hpp"
 #include "algorithm/sat.hpp"
 
+#include "sys/render.hpp"
+
 // #include "algorithm"
 // #include "algorithm"
 
 sf::Color const green(33, 184, 49,255);
 sf::Color const blue(72, 191, 191, 255);
 sf::Color const red(205,70,56,255);
+
+#define SOFT_GREEN          33_u8 , 184_u8, 49_u8 , 255_u8
+#define LIGHT_BLUE          72_u8 , 191_u8, 191_u8, 255_u8
+#define CREAM_RED           205_u8, 70_u8 , 56_u8 , 255_u8
+
 
 namespace CDP{
 
