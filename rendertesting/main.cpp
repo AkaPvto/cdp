@@ -3,9 +3,9 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/src/imgui.h"
+#include "imgui/src/imgui_impl_glfw.h"
+#include "imgui/src/imgui_impl_opengl3.h"
 
 #include "shaderprogram.hpp"
 #include "VBO.hpp"
@@ -339,10 +339,10 @@ void init(){
 }
 
 void drawAll(){
-    shader_P.use();
-    vao.bind();
+    // shader_P.use();
+    // vao.bind();
 
-    glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
 }
 
 void draw_polygon(){
@@ -363,20 +363,20 @@ struct RenderStorage{
 
 template <typename T>
 void draw(T const& drawable){
-    drawable.draw(RenderStorage(vertices, index_buff, last_index));
+    // drawable.draw(RenderStorage(vertices, index_buff, last_index));
 
 }
 
 void insert(){
     // Insert and configure the data
-    vao.bind();
+    // vao.bind();
 
-    vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-    ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    // vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    // ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
     
-    vao.unbind();
-    vbo.unbind();
-    ebo.unbind();
+    // vao.unbind();
+    // vbo.unbind();
+    // ebo.unbind();
 }
 
 
@@ -394,22 +394,22 @@ void drawUI(){
 }
 
 void render(){
-    // Draw the background
-    glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
-    glClear(GL_COLOR_BUFFER_BIT);   
+    // // Draw the background
+    // glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
+    // glClear(GL_COLOR_BUFFER_BIT);   
 
-    // Draw all the polygons
-    // This function will draw all the polygons storaged in the class
-    drawAll();
+    // // Draw all the polygons
+    // // This function will draw all the polygons storaged in the class
+    // drawAll();
 
-    // Draw the interface
-    // This function will execute all the logic behind the UI
-    drawUI();
+    // // Draw the interface
+    // // This function will execute all the logic behind the UI
+    // drawUI();
 
 
-    // Swap the buffer and call the events at the end of the render iteration
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+    // // Swap the buffer and call the events at the end of the render iteration
+    // glfwSwapBuffers(window);
+    // glfwPollEvents();
 }
 
 void end(){
