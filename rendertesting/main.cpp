@@ -7,11 +7,14 @@
 #include "imgui/src/imgui_impl_glfw.h"
 #include "imgui/src/imgui_impl_opengl3.h"
 
+// #include "render.hpp"
+
 #include "shaderprogram.hpp"
 #include "VBO.hpp"
 #include "VAO.hpp"
 #include "EBO.hpp"
 #include <vector>
+#include <array>
 
 
 #include <iostream>
@@ -95,7 +98,12 @@ int main(){
     struct Polygon{
         Polygon(std::vector<Vector2r> v, Color c) : vertices{v}, color{c}{}
         std::vector<Vector2r> vertices;
+        GLfloat* buffer_data;
+        GLuint* index_data;
         Color color;
+        VAO vao;
+        VBO vbo;
+        EBO ebo;
 
         void normalize_vertices(uint32_t width, uint32_t height){
             uint32_t norm_width = width/2;
@@ -104,6 +112,56 @@ int main(){
                 v.x = (v.x-norm_width)/norm_width;
                 v.y = (v.y-norm_height)/norm_height;
             }
+        }
+
+        void update_buffers(){
+            // (x + y + color data (4 values))
+            int vertex_size = 6;
+            // Vertices size * vertex size
+            int buffer_size = vertices.size()*(vertex_size);
+            //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
+            int index_size = (vertices.size()-2)*3;
+
+            buffer_data = new GLfloat[buffer_size];
+            index_data = new GLuint[index_size];
+
+            // Insert the data of each vertex into the buffer_data
+            int count = 0;
+            for(auto v : vertices){
+                buffer_data[count++] = v.x;
+                buffer_data[count++] = v.y;
+                buffer_data[count++] = color.r_f;
+                buffer_data[count++] = color.g_f;
+                buffer_data[count++] = color.b_f;
+                buffer_data[count++] = color.a_f;
+            }
+            count = 0;
+            
+            // Insert the index of each vertex into the index_data
+            for(size_t i = 1; i<vertices.size()-1; ++i){
+                index_data[count++] = 0;
+                index_data[count++] = i;
+                index_data[count++] = i+1;
+            }
+    
+            vao.bind();
+            vbo.insert(buffer_data, sizeof(GLfloat)*buffer_size);
+            ebo.insert(index_data,  sizeof(GLuint)*index_size);
+
+            vbo.bind();
+            vao.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+            vao.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+            vao.unbind();
+
+            vbo.unbind();
+            ebo.unbind();
+
+        }
+
+        void delete_buffers(){
+            vbo.destroy();
+            ebo.destroy();
+            vao.destroy();
         }
     };
     std::vector<Polygon> polygons;
@@ -166,8 +224,39 @@ int main(){
         }
 
     };
-
     add_polygons();
+
+    auto add_polygon = [&](int p){
+        vertices.clear();
+        index_buff.clear();
+
+        auto& polygon = polygons.at(p);
+
+        // (x + y + color data (4 values))
+        int vertex_size = 6;
+        // Vertices size * vertex size
+        int buffer_size = polygon.vertices.size()*(vertex_size);
+        //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
+        int index_size = (polygon.vertices.size()-2)*3;
+
+        // Insert the data of each vertex into the buffer_data
+        int count = 0;
+        for(auto v : polygon.vertices){
+            vertices.push_back(v.x);
+            vertices.push_back(v.y);
+            vertices.push_back(polygon.color.r_f);
+            vertices.push_back(polygon.color.g_f);
+            vertices.push_back(polygon.color.b_f);
+            vertices.push_back(polygon.color.a_f);
+        }
+        
+        // Insert the index of each vertex into the index_data
+        for(size_t i = 1; i<polygon.vertices.size()-1; ++i){
+            index_buff.push_back(0);
+            index_buff.push_back(i);
+            index_buff.push_back(i+1);
+        }
+    };
 
     int count = 0;
     for(auto v : vertices){
@@ -210,22 +299,55 @@ int main(){
     // glDeleteShader(vertexShader);
     // glDeleteShader(fragmentShader);
     // glLinkProgram(shaderProgram);
+    VAO vao1{};
+    VAO vao2{};
+    VBO vbo1{};
+    VBO vbo2{};
+    EBO ebo1{};
+    EBO ebo2{};
+
+            
+    // Bindeo el VAO
+    vao1.bind();
     
-    VAO vao{};
-    VBO vbo{};
-    EBO ebo{};
+    // Rellena "vertices" y "index_buff" con los datos del poligono pasado por parametro
+    add_polygon(1);
+    // Guardas el tamaño del index_buff para despues usarlo en glDrawElements
+    int index_size_1 = index_buff.size();
+    // Insertas los datos en el VBO
+    vbo1.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    // Insertas los datos en el EBO
+    ebo1.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
     
-    vao.bind();
-    vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-    ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    // Bindeo el VBO
+    vbo1.bind();
+    // Añadir los atributos al VAO
+    vao1.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+    vao1.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+    // Unbineamos el VAO
+    vao1.unbind();
+    
+    vao2.bind();
+    add_polygon(0);
+    int index_size_2 = index_buff.size();
+    vbo2.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    ebo2.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    
+    vbo2.bind();
+    vao2.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+    vao2.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+    vao2.unbind();
+    
+    vao1.unbind();
+    vao2.unbind();
+    vbo1.unbind();
+    vbo2.unbind();
+    ebo1.unbind();
+    ebo2.unbind();
     
     
-    vao.addAttrib(vbo, 0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
-    vao.addAttrib(vbo, 1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
-    
-    vao.unbind();
-    vbo.unbind();
-    ebo.unbind();
+    polygons.at(0).update_buffers();
+    polygons.at(1).update_buffers();
 
     
     
@@ -257,23 +379,33 @@ int main(){
     // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(2* sizeof(float)));
     // glEnableVertexAttribArray(1);
     
-    
     // glBindVertexArray(0);
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     Color bkg(BACKGROUND_COLOR);
+    int c{};
+    std::vector<Vector2r> vrts;
+    Color col;
     std::cout << "Do we start this?\n";
     while(!glfwWindowShouldClose(window)){
         glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
         glClear(GL_COLOR_BUFFER_BIT);
         shader_P.use();
         // glUseProgram(shaderProgram);
-        vao.bind();
+        // vao2.bind();
+        // glDrawElements(GL_TRIANGLES, index_size_2, GL_UNSIGNED_INT, 0);
+
+        // vao1.bind();
+        // glDrawElements(GL_TRIANGLES, index_size_1, GL_UNSIGNED_INT, 0);
+        
+        for(auto& p : polygons){
+            p.vao.bind();
+            glDrawElements(GL_TRIANGLES, (p.vertices.size()-2)*3,GL_UNSIGNED_INT, 0);
+        }
         // glBindVertexArray(VAO);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         // // glDrawElements(primitive, numIndices, typeIndices, index of indices (?))
-        glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -286,6 +418,31 @@ int main(){
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
+
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            if(c++ <= 0){
+                vrts.clear();
+                std::cout << "A is pressed\n";
+                auto pol = polygons.begin();
+                for(auto v : pol->vertices){
+                    vrts.push_back(v);
+                }
+                col = pol->color;
+                pol->delete_buffers();
+                polygons.erase(polygons.begin());
+            }
+        }
+        else{
+            if(c>0){
+                polygons.emplace_back(vrts, col);
+                polygons.back().update_buffers();
+            }
+            c=0;
+        } 
+
+        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -294,9 +451,15 @@ int main(){
     // glDeleteBuffers(1, &VBO);
     // glDeleteBuffers(1, &EBO);
     // glDeleteProgram(shaderProgram);
-    vao.destroy();
-    vbo.destroy();
-    ebo.destroy();
+    vao1.destroy();
+    vao2.destroy();
+    vbo1.destroy();
+    ebo1.destroy();
+    vbo2.destroy();
+    ebo2.destroy();
+    // for(auto& p: polygons){
+    //     p.delete_buffers();
+    // }
     shader_P.destroy();
 
 
@@ -306,121 +469,166 @@ int main(){
 
 
 
-void init(){
-    // GLFW initialization values/flags
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+// void RenderSystem::init(){
+//     // GLFW initialization values/flags
+//     glfwInit();
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Window creation
-    // CHANGE WINDOW TO AN ATTRIBUTE
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
-    if(window == NULL){
-        std::cout << "Window could not be created!\n"; 
-        glfwTerminate();
-    }
-    glfwMakeContextCurrent(window);
-
-
-    // ImGui initialization and link with the window
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
-    ImGui::StyleColorsDark();
-
-    // Glad initialization and configuration
-    gladLoadGL();
-
-    glViewport(0, 0, 1280, 720);
-
-}
-
-void drawAll(){
-    // shader_P.use();
-    // vao.bind();
-
-    // glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
-}
-
-void draw_polygon(){
-    // Process the given data into the vertices and index_buff arrays
+//     // Window creation
+//     // CHANGE WINDOW TO AN ATTRIBUTE
+//     GLFWwindow* window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
+//     if(window == NULL){
+//         std::cout << "Window could not be created!\n"; 
+//         glfwTerminate();
+//     }
+//     glfwMakeContextCurrent(window);
 
 
-}
+//     // ImGui initialization and link with the window
+//     IMGUI_CHECKVERSION();
+//     ImGui::CreateContext();
+//     ImGuiIO& io = ImGui::GetIO();
+//     ImGui_ImplGlfw_InitForOpenGL(window, true);
+//     ImGui_ImplOpenGL3_Init("#version 130");
+//     ImGui::StyleColorsDark();
 
-struct RenderStorage{
-    RenderStorage(std::vector<GLfloat>& _v, std::vector<GLuint>& _ib, uint32_t& _li) : vertices{_v}, index_buff{_ib}, last_index{_li}{}
-    RenderStorage() = delete;
-    std::vector<GLfloat>& vertices;
-    std::vector<GLuint>& index_buff;
-    uint32_t& last_index;
-};
+//     // Glad initialization and configuration
+//     gladLoadGL();
+
+//     glViewport(0, 0, 1280, 720);
 
 
 
-template <typename T>
-void draw(T const& drawable){
-    // drawable.draw(RenderStorage(vertices, index_buff, last_index));
 
-}
+//     // Initialize the shader program
+//     ShaderProgram shader_P{};
+//     shader_P.addShader("shader.vert", GL_VERTEX_SHADER);
+//     shader_P.addShader("shader.frag", GL_FRAGMENT_SHADER);
+//     // shader_P.addShader("shader.geom", GL_GEOMETRY_SHADER);
+//     shader_P.link();
 
-void insert(){
-    // Insert and configure the data
-    // vao.bind();
-
-    // vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-    // ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+//     VAO vao{};
+//     VBO vbo{};
+//     EBO ebo{};
     
-    // vao.unbind();
-    // vbo.unbind();
-    // ebo.unbind();
-}
+//     vao.bind(); 
+    
+//     vao.addAttrib(vbo, 0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+//     vao.addAttrib(vbo, 1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+    
+//     vao.unbind();
+//     vbo.unbind();
+//     ebo.unbind();
+
+    
+// }
+
+// void RenderSystem::update(){
+//     // Rendering
+//     glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
+//     glClear(GL_COLOR_BUFFER_BIT);
+//     shader_p.use();
+//     // glUseProgram(shaderProgram);
+//     vao.bind();
+    
+//     // glDrawArrays(GL_TRIANGLES, 0, 3);
+//     // glDrawElements(primitive, numIndices, typeIndices, index of indices (?))
+//     glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
 
 
-void drawUI(){
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
 
-    ImGui::Begin("Window Tittle");
-    ImGui::Text("Window text!");
-    ImGui::End();
+//     // User Interfaze management
+//     UI.update(); // Create a manager class for the user interface using the imgui library
 
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void render(){
-    // // Draw the background
-    // glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
-    // glClear(GL_COLOR_BUFFER_BIT);   
-
-    // // Draw all the polygons
-    // // This function will draw all the polygons storaged in the class
-    // drawAll();
-
-    // // Draw the interface
-    // // This function will execute all the logic behind the UI
-    // drawUI();
+//     // Swap the buffer for rendering the next frame and call the events poll
+//     glfwSwapBuffers(window);
+//     glfwPollEvents();
 
 
-    // // Swap the buffer and call the events at the end of the render iteration
-    // glfwSwapBuffers(window);
-    // glfwPollEvents();
-}
+//     // Empty the vertices and index arrays
+    
+//     vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+//     ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+// }
 
-void end(){
-    // IMPLEMENT THIS LATER
-    // // Delete all the vertex objects and the shader program
-    // glDeleteBuffers(1, &VBO);
-    // glDeleteVertexArrays(1, &VAO);
-    // glDeleteProgram(shaderProgram);
+// void draw_polygon(){
+//     // Process the given data into the vertices and index_buff arrays
+
+
+// }
+
+// struct RenderStorage{
+//     RenderStorage(std::vector<GLfloat>& _v, std::vector<GLuint>& _ib, uint32_t& _li) : vertices{_v}, index_buff{_ib}, last_index{_li}{}
+//     RenderStorage() = delete;
+//     std::vector<GLfloat>& vertices;
+//     std::vector<GLuint>& index_buff;
+//     uint32_t& last_index;
+// };
+
+
+
+// template <typename T>
+// void draw(T const& drawable){
+//     // drawable.draw(RenderStorage(vertices, index_buff, last_index));
+
+// }
+
+// void insert(){
+//     // Insert and configure the data
+//     // vao.bind();
+
+//     // vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+//     // ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    
+//     // vao.unbind();
+//     // vbo.unbind();
+//     // ebo.unbind();
+// }
+
+
+// void drawUI(){
+//     ImGui_ImplOpenGL3_NewFrame();
+//     ImGui_ImplGlfw_NewFrame();
+//     ImGui::NewFrame();
+
+//     ImGui::Begin("Window Tittle");
+//     ImGui::Text("Window text!");
+//     ImGui::End();
+
+//     ImGui::Render();
+//     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+// }
+
+// void render(){
+//     // // Draw the background
+//     // glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
+//     // glClear(GL_COLOR_BUFFER_BIT);   
+
+//     // // Draw all the polygons
+//     // // This function will draw all the polygons storaged in the class
+//     // drawAll();
+
+//     // // Draw the interface
+//     // // This function will execute all the logic behind the UI
+//     // drawUI();
+
+
+//     // // Swap the buffer and call the events at the end of the render iteration
+//     // glfwSwapBuffers(window);
+//     // glfwPollEvents();
+// }
+
+// void end(){
+//     // IMPLEMENT THIS LATER
+//     // // Delete all the vertex objects and the shader program
+//     // glDeleteBuffers(1, &VBO);
+//     // glDeleteVertexArrays(1, &VAO);
+//     // glDeleteProgram(shaderProgram);
     
 
-    // // Delete the glfw window
-    // glfwDestroyWindow(window);
-    // glfwTerminate();
-}
+//     // // Delete the glfw window
+//     // glfwDestroyWindow(window);
+//     // glfwTerminate();
+// }

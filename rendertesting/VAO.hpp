@@ -7,7 +7,7 @@ struct VBO;
 // Vertex Array Object
 struct VAO{
     VAO();
-    void addAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLint stride, void const* offset);
+    void addAttrib(GLuint layout, GLuint numComponents, GLenum type, GLint stride, void const* offset);
     void bind();
     void unbind();
     void destroy();

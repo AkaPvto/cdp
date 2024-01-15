@@ -3,6 +3,11 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "VBO.hpp"
+#include "EBO.hpp"
+#include "VAO.hpp"
+#include "shaderprogram.hpp"
+
 
 #define WINDOW_HEIGHT 1080
 #define WINDOW_WIDTH 1920
@@ -38,8 +43,7 @@ struct RenderSystem{
 
     private:
         GLFWwindow* window{};
-        GLuint* VBO;
-        GLuint* VAO;
-        GLuint shaderProgram{};
+        VAO vao;
+        ShaderProgram shader_p{};
 
 };
