@@ -9,6 +9,10 @@ void VBO::insert(GLfloat* vertices, GLsizeiptr size){
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
+void VBO::modify(GLfloat* data, GLsizeiptr size, GLintptr offset){
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
 
 void VBO::bind(){
     glBindBuffer(GL_ARRAY_BUFFER, id);

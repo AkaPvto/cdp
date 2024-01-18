@@ -23,6 +23,10 @@
 #define BACKGROUND_COLOR    57_u8 , 57_u8 , 57_u8 , 255_u8
 #define RED_CREAM           205_u8, 70_u8 , 56_u8 , 255_u8
 #define BLUE_LIGHT          72_u8 , 191_u8, 191_u8, 255_u8
+#define SOFT_GREEN          33_u8 , 184_u8, 49_u8 , 255_u8
+
+#define SCREEN_WIDTH        1280
+#define SCREEN_HEIGHT       720
 
 // Vertex Shader source code
 const char* vertexShaderSource = "#version 330 core\n"
@@ -90,9 +94,12 @@ int main(){
     struct Vector2r{
         float x{}, y{};
 
-        Vector2r(Vector2r const&) = default;
-        Vector2r(Vector2r&&) = default;
-        Vector2r() = default;
+        Vector2r& operator=(std::initializer_list<float> list){
+            x = *(list.begin());
+            y = *(list.begin()+1);
+
+            return *this;
+        }
     };
     
     struct Polygon{
@@ -100,6 +107,7 @@ int main(){
         std::vector<Vector2r> vertices;
         GLfloat* buffer_data;
         GLuint* index_data;
+        Vector2r position{};
         Color color;
         VAO vao;
         VBO vbo;
@@ -114,6 +122,34 @@ int main(){
             }
         }
 
+        void update_color(){
+            for(size_t i{};i<vertices.size();++i){
+                vbo.modify(reinterpret_cast<GLfloat*>(&color.r_f), sizeof(GLfloat)*4, sizeof(GLfloat)*i*4);
+            }
+        }
+        
+        void update_color(Color c){
+            color = c;
+            update_color();
+        }
+        
+        void update_position(float x, float y){
+            position = {x,y};
+
+            // Obtain the normalized value of the polygon's position
+            uint32_t norm_width = SCREEN_WIDTH/2;
+            uint32_t norm_height = SCREEN_HEIGHT/2;
+
+            int count = 0;
+            for(auto v : vertices){
+                buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
+                buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
+                vbo.modify((buffer_data + (count-2)), sizeof(GLfloat)*2, sizeof(GLfloat)*(count-2));
+                
+                count +=4;
+            }
+        }
+
         void update_buffers(){
             // (x + y + color data (4 values))
             int vertex_size = 6;
@@ -125,11 +161,15 @@ int main(){
             buffer_data = new GLfloat[buffer_size];
             index_data = new GLuint[index_size];
 
+            // Obtain the normalized value of the polygon's position
+            uint32_t norm_width = SCREEN_WIDTH/2;
+            uint32_t norm_height = SCREEN_HEIGHT/2;
+
             // Insert the data of each vertex into the buffer_data
             int count = 0;
             for(auto v : vertices){
-                buffer_data[count++] = v.x;
-                buffer_data[count++] = v.y;
+                buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
+                buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
                 buffer_data[count++] = color.r_f;
                 buffer_data[count++] = color.g_f;
                 buffer_data[count++] = color.b_f;
@@ -168,11 +208,11 @@ int main(){
     
     std::vector<Vector2r> v2{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
     polygons.emplace_back(v2, blue);
-    polygons.back().normalize_vertices(1280, 720);
+    // polygons.back().normalize_vertices(1280, 720);
 
     std::vector<Vector2r> verts{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
     polygons.emplace_back(verts, red);
-    polygons.back().normalize_vertices(1280, 720);
+    // polygons.back().normalize_vertices(1280, 720);
 
 
 
@@ -387,6 +427,8 @@ int main(){
     int c{};
     std::vector<Vector2r> vrts;
     Color col;
+    Vector2r pos_t{};
+    Color green(SOFT_GREEN);
     std::cout << "Do we start this?\n";
     while(!glfwWindowShouldClose(window)){
         glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
@@ -422,6 +464,12 @@ int main(){
 
         if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
             if(c++ <= 0){
+                float w = std::rand()%SCREEN_WIDTH;
+                float h = std::rand()%SCREEN_HEIGHT;
+
+                (polygons.end()-1)->update_position(w, h);
+
+
                 vrts.clear();
                 std::cout << "A is pressed\n";
                 auto pol = polygons.begin();
@@ -429,13 +477,16 @@ int main(){
                     vrts.push_back(v);
                 }
                 col = pol->color;
+                pos_t = pol->position;
                 pol->delete_buffers();
                 polygons.erase(polygons.begin());
+
             }
         }
         else{
             if(c>0){
-                polygons.emplace_back(vrts, col);
+                polygons.emplace_back(vrts, green);
+                polygons.back().position = pos_t;
                 polygons.back().update_buffers();
             }
             c=0;
