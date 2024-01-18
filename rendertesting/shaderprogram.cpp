@@ -13,8 +13,7 @@ std::string read_file(const char* f){
     return str;
 }
 
-
-ShaderProgram::ShaderProgram(){
+void ShaderProgram::init(){
     program = glCreateProgram();
 }
 

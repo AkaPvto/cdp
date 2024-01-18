@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 
 struct ShaderProgram{
-    ShaderProgram();
+    void init();
     void addShader(char const* filename, GLenum type);
     void link();
     void use();

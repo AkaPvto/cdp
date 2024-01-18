@@ -7,7 +7,7 @@
 #include "imgui/src/imgui_impl_glfw.h"
 #include "imgui/src/imgui_impl_opengl3.h"
 
-// #include "render.hpp"
+#include "render.hpp"
 
 #include "shaderprogram.hpp"
 #include "VBO.hpp"
@@ -47,23 +47,181 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "   FragColor = color;\n"
 "}\n\0";
 
+struct Vector2r{
+    float x{}, y{};
 
-uint8_t operator ""_u8(unsigned long long i){
-    return uint8_t(i);
-}
-struct Color{
-    uint8_t r{},g{},b{},a{};
-    float   r_f{},g_f{},b_f{},a_f{};
-    
-    Color() = default;
-    
-    Color(uint8_t _r,uint8_t _g, uint8_t _b,uint8_t _a) :
-    r{_r}, g{_g}, b{_b}, a{_a}, r_f{_r/255.0f}, g_f{_g/255.0f}, b_f{_b/255.0f}, a_f{_a/255.0f} {}
+    Vector2r& operator=(std::initializer_list<float> list){
+        x = *(list.begin());
+        y = *(list.begin()+1);
 
-    Color(float _r,float _g, float _b,float _a) :
-    r{uint8_t(_r*255)}, g{uint8_t(_g*255)}, b{uint8_t(_b*255)}, a{uint8_t(_a*255)}, r_f{_r}, g_f{_g}, b_f{_b}, a_f{_a} {}
+        return *this;
+    }
 };
-int main(){
+   
+struct Polygon : Drawable{
+    Polygon(std::vector<Vector2r> v, Color c) : vertices{v}, color{c}{}
+    std::vector<Vector2r> vertices;
+    Vector2r position{};
+    Color color;
+    VAO vao;
+    VBO vbo;
+    EBO ebo;
+
+    void normalize_vertices(uint32_t width, uint32_t height){
+        uint32_t norm_width = width/2;
+        uint32_t norm_height = height/2;
+        for(auto& v : vertices){
+            v.x = (v.x-norm_width)/norm_width;
+            v.y = (v.y-norm_height)/norm_height;
+        }
+    }
+
+    void update_color(){
+        for(size_t i{};i<vertices.size();++i){
+            vbo.modify(reinterpret_cast<GLfloat*>(&color.r_f), sizeof(GLfloat)*4, sizeof(GLfloat)*i*4);
+        }
+    }
+    
+    void update_color(Color c){
+        color = c;
+        update_color();
+    }
+    
+    void update_position(float x, float y){
+        position = {x,y};
+
+        // Obtain the normalized value of the polygon's position
+        uint32_t norm_width = SCREEN_WIDTH/2;
+        uint32_t norm_height = SCREEN_HEIGHT/2;
+
+        // Vector data array (size = 2*number of vertices)
+        GLfloat buffer_data[vertices.size()*6];
+
+        int count = 0;
+        for(auto v : vertices){
+            // Storage in the array the x and y values
+            buffer_data[count] = ((v.x+position.x)-norm_width)/norm_width;
+            buffer_data[count+1] = ((v.y+position.y)-norm_height)/norm_height;
+            // With the array, being a pointer, can use the "+" operator to obtein the memory adress of the item you need. In this case the "count"-th item
+            // In the VBO the "x" and "y" bytes of info are storaged before the bytes of the color
+            // Since the color is x2 of the coordinades, there is 6 floats of offset per vertex. The ammount of vertices already iterated is count/2 
+            vbo.modify((buffer_data + count), sizeof(GLfloat)*2, sizeof(GLfloat)*(count*3));
+
+            count+=2;
+        }
+    }
+
+    void update_buffers(){
+        // (x + y + color data (4 values))
+        int vertex_size = 6;
+        // Vertices size * vertex size
+        int buffer_size = vertices.size()*(vertex_size);
+        //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
+        int index_size = getEBOsize();
+
+        GLfloat buffer_data[buffer_size];
+        GLuint  index_data[index_size];
+
+        // Obtain the normalized value of the polygon's position
+        uint32_t norm_width = SCREEN_WIDTH/2;
+        uint32_t norm_height = SCREEN_HEIGHT/2;
+
+        // Insert the data of each vertex into the buffer_data
+        int count = 0;
+        for(auto v : vertices){
+            buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
+            buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
+            buffer_data[count++] = color.r_f;
+            buffer_data[count++] = color.g_f;
+            buffer_data[count++] = color.b_f;
+            buffer_data[count++] = color.a_f;
+        }
+        count = 0;
+        
+        // Insert the index of each vertex into the index_data
+        for(size_t i = 1; i<vertices.size()-1; ++i){
+            index_data[count++] = 0;
+            index_data[count++] = i;
+            index_data[count++] = i+1;
+        }
+
+        vao.bind();
+        vbo.modify(buffer_data, sizeof(GLfloat)*buffer_size, 0);
+        ebo.modify(index_data,  sizeof(GLuint)*index_size, 0);
+
+        vbo.bind();
+        vao.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+        vao.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+        vao.unbind();
+
+        vbo.unbind();
+        ebo.unbind();
+
+    }
+
+    void init_buffers(){
+        // (x + y + color data (4 values))
+        int vertex_size = 6;
+        // Vertices size * vertex size
+        int buffer_size = vertices.size()*(vertex_size);
+        //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
+        int index_size = getEBOsize();
+
+        GLfloat buffer_data[buffer_size];
+        GLuint  index_data[index_size];
+
+        // Obtain the normalized value of the polygon's position
+        uint32_t norm_width = SCREEN_WIDTH/2;
+        uint32_t norm_height = SCREEN_HEIGHT/2;
+
+        // Insert the data of each vertex into the buffer_data
+        int count = 0;
+        for(auto v : vertices){
+            buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
+            buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
+            buffer_data[count++] = color.r_f;
+            buffer_data[count++] = color.g_f;
+            buffer_data[count++] = color.b_f;
+            buffer_data[count++] = color.a_f;
+        }
+        count = 0;
+        
+        // Insert the index of each vertex into the index_data
+        for(size_t i = 1; i<vertices.size()-1; ++i){
+            index_data[count++] = 0;
+            index_data[count++] = i;
+            index_data[count++] = i+1;
+        }
+
+        vao.bind();
+        vbo.insert(buffer_data, sizeof(GLfloat)*buffer_size);
+        ebo.insert(index_data,  sizeof(GLuint)*index_size);
+
+        vbo.bind();
+        vao.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+        vao.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+        vao.unbind();
+
+        vbo.unbind();
+        ebo.unbind();
+    }
+
+    void delete_buffers(){
+        vbo.destroy();
+        ebo.destroy();
+        vao.destroy();
+    }
+
+    int getEBOsize(){ return (vertices.size()-2)*3; }
+    
+    void draw(){
+        vao.bind();
+        glDrawElements(GL_TRIANGLES, getEBOsize(), GL_UNSIGNED_INT, 0);
+    }
+    
+};
+
+int main_(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -91,119 +249,7 @@ int main(){
     Color red(RED_CREAM);
     Color blue(BLUE_LIGHT);
 
-    struct Vector2r{
-        float x{}, y{};
 
-        Vector2r& operator=(std::initializer_list<float> list){
-            x = *(list.begin());
-            y = *(list.begin()+1);
-
-            return *this;
-        }
-    };
-    
-    struct Polygon{
-        Polygon(std::vector<Vector2r> v, Color c) : vertices{v}, color{c}{}
-        std::vector<Vector2r> vertices;
-        GLfloat* buffer_data;
-        GLuint* index_data;
-        Vector2r position{};
-        Color color;
-        VAO vao;
-        VBO vbo;
-        EBO ebo;
-
-        void normalize_vertices(uint32_t width, uint32_t height){
-            uint32_t norm_width = width/2;
-            uint32_t norm_height = height/2;
-            for(auto& v : vertices){
-                v.x = (v.x-norm_width)/norm_width;
-                v.y = (v.y-norm_height)/norm_height;
-            }
-        }
-
-        void update_color(){
-            for(size_t i{};i<vertices.size();++i){
-                vbo.modify(reinterpret_cast<GLfloat*>(&color.r_f), sizeof(GLfloat)*4, sizeof(GLfloat)*i*4);
-            }
-        }
-        
-        void update_color(Color c){
-            color = c;
-            update_color();
-        }
-        
-        void update_position(float x, float y){
-            position = {x,y};
-
-            // Obtain the normalized value of the polygon's position
-            uint32_t norm_width = SCREEN_WIDTH/2;
-            uint32_t norm_height = SCREEN_HEIGHT/2;
-
-            int count = 0;
-            for(auto v : vertices){
-                buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
-                buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
-                vbo.modify((buffer_data + (count-2)), sizeof(GLfloat)*2, sizeof(GLfloat)*(count-2));
-                
-                count +=4;
-            }
-        }
-
-        void update_buffers(){
-            // (x + y + color data (4 values))
-            int vertex_size = 6;
-            // Vertices size * vertex size
-            int buffer_size = vertices.size()*(vertex_size);
-            //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
-            int index_size = (vertices.size()-2)*3;
-
-            buffer_data = new GLfloat[buffer_size];
-            index_data = new GLuint[index_size];
-
-            // Obtain the normalized value of the polygon's position
-            uint32_t norm_width = SCREEN_WIDTH/2;
-            uint32_t norm_height = SCREEN_HEIGHT/2;
-
-            // Insert the data of each vertex into the buffer_data
-            int count = 0;
-            for(auto v : vertices){
-                buffer_data[count++] = ((v.x+position.x)-norm_width)/norm_width;
-                buffer_data[count++] = ((v.y+position.y)-norm_height)/norm_height;
-                buffer_data[count++] = color.r_f;
-                buffer_data[count++] = color.g_f;
-                buffer_data[count++] = color.b_f;
-                buffer_data[count++] = color.a_f;
-            }
-            count = 0;
-            
-            // Insert the index of each vertex into the index_data
-            for(size_t i = 1; i<vertices.size()-1; ++i){
-                index_data[count++] = 0;
-                index_data[count++] = i;
-                index_data[count++] = i+1;
-            }
-    
-            vao.bind();
-            vbo.insert(buffer_data, sizeof(GLfloat)*buffer_size);
-            ebo.insert(index_data,  sizeof(GLuint)*index_size);
-
-            vbo.bind();
-            vao.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
-            vao.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
-            vao.unbind();
-
-            vbo.unbind();
-            ebo.unbind();
-
-        }
-
-        void delete_buffers(){
-            vbo.destroy();
-            ebo.destroy();
-            vao.destroy();
-        }
-    };
     std::vector<Polygon> polygons;
     
     std::vector<Vector2r> v2{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
@@ -516,94 +562,95 @@ int main(){
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+
+    return 0;
 }
 
 
 
-// void RenderSystem::init(){
-//     // GLFW initialization values/flags
-//     glfwInit();
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+void RenderSystem::init(){
+    // GLFW initialization values/flags
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-//     // Window creation
-//     // CHANGE WINDOW TO AN ATTRIBUTE
-//     GLFWwindow* window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
-//     if(window == NULL){
-//         std::cout << "Window could not be created!\n"; 
-//         glfwTerminate();
-//     }
-//     glfwMakeContextCurrent(window);
-
-
-//     // ImGui initialization and link with the window
-//     IMGUI_CHECKVERSION();
-//     ImGui::CreateContext();
-//     ImGuiIO& io = ImGui::GetIO();
-//     ImGui_ImplGlfw_InitForOpenGL(window, true);
-//     ImGui_ImplOpenGL3_Init("#version 130");
-//     ImGui::StyleColorsDark();
-
-//     // Glad initialization and configuration
-//     gladLoadGL();
-
-//     glViewport(0, 0, 1280, 720);
+    // Window creation
+    // CHANGE WINDOW TO AN ATTRIBUTE
+    window = glfwCreateWindow(1280, 720, "Collision Detection Learning Program", NULL, NULL);
+    if(window == NULL){
+        std::cout << "Window could not be created!\n"; 
+        glfwTerminate();
+    }
+    glfwMakeContextCurrent(window);
 
 
+    // ImGui initialization and link with the window
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui::StyleColorsDark();
+
+    // Glad initialization and configuration
+    gladLoadGL();
+
+    glViewport(0, 0, 1280, 720);
 
 
-//     // Initialize the shader program
-//     ShaderProgram shader_P{};
-//     shader_P.addShader("shader.vert", GL_VERTEX_SHADER);
-//     shader_P.addShader("shader.frag", GL_FRAGMENT_SHADER);
-//     // shader_P.addShader("shader.geom", GL_GEOMETRY_SHADER);
-//     shader_P.link();
-
-//     VAO vao{};
-//     VBO vbo{};
-//     EBO ebo{};
+    // Initialize the shader program
+    shader_p.init();
+    shader_p.addShader("shader.vert", GL_VERTEX_SHADER);
+    shader_p.addShader("shader.frag", GL_FRAGMENT_SHADER);
+    // shader_p.addShader("shader.geom", GL_GEOMETRY_SHADER);
+    shader_p.link();
     
-//     vao.bind(); 
-    
-//     vao.addAttrib(vbo, 0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
-//     vao.addAttrib(vbo, 1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
-    
-//     vao.unbind();
-//     vbo.unbind();
-//     ebo.unbind();
+}
+
+template <typename DrawType>
+void RenderSystem::update(DrawType* draw_list, int size){
+    // Rendering
+    glClearColor(   background_color.r_f,
+                    background_color.g_f,
+                    background_color.b_f,
+                    background_color.a_f );
+    glClear(GL_COLOR_BUFFER_BIT);
+    shader_p.use();
+    // glUseProgram(shaderProgram); 2352 - 2528
+    // std::cout << "Vector adress: "<< draw_list << "\nVector end adress: " << ++draw_list << "\nSize of type: " << sizeof(DrawType) << std::endl;
+    // Iterate through the list and call draw function
+    void* list_end = draw_list+size;
+    while(draw_list < list_end){
+        draw_list->draw();
+        draw_list++;
+    }
 
     
-// }
+    // User Interfaze management
+    // UI.update(); // Create a manager class for the user interface using the imgui library
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-// void RenderSystem::update(){
-//     // Rendering
-//     glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
-//     glClear(GL_COLOR_BUFFER_BIT);
-//     shader_p.use();
-//     // glUseProgram(shaderProgram);
-//     vao.bind();
-    
-//     // glDrawArrays(GL_TRIANGLES, 0, 3);
-//     // glDrawElements(primitive, numIndices, typeIndices, index of indices (?))
-//     glDrawElements(GL_TRIANGLES, index_buff.size(), GL_UNSIGNED_INT, 0);
+    ImGui::Begin("Window Tittle");
+    ImGui::Text("Window text!");
+    ImGui::End();
 
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-//     // User Interfaze management
-//     UI.update(); // Create a manager class for the user interface using the imgui library
+    // Swap the buffer for rendering the next frame and call the events poll
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 
-//     // Swap the buffer for rendering the next frame and call the events poll
-//     glfwSwapBuffers(window);
-//     glfwPollEvents();
+}
 
-
-//     // Empty the vertices and index arrays
-    
-//     vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-//     ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
-// }
-
+bool RenderSystem::isOpen(){
+    return !glfwWindowShouldClose(window);
+}
 // void draw_polygon(){
 //     // Process the given data into the vertices and index_buff arrays
 
@@ -671,15 +718,40 @@ int main(){
 //     // glfwPollEvents();
 // }
 
-// void end(){
-//     // IMPLEMENT THIS LATER
-//     // // Delete all the vertex objects and the shader program
-//     // glDeleteBuffers(1, &VBO);
-//     // glDeleteVertexArrays(1, &VAO);
-//     // glDeleteProgram(shaderProgram);
+void RenderSystem::end(){
+    // IMPLEMENT THIS LATER
+    // Delete all the vertex objects and the shader program
+    shader_p.destroy();
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteProgram(shaderProgram);
     
 
-//     // // Delete the glfw window
-//     // glfwDestroyWindow(window);
-//     // glfwTerminate();
-// }
+    // Delete the glfw window
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
+int main(){
+    RenderSystem render;
+    render.init();
+    Color red(RED_CREAM);
+    Color blue(BLUE_LIGHT);
+    std::vector<Polygon> polygons;
+
+    std::vector<Vector2r> v2{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
+    polygons.emplace_back(v2, blue);
+    polygons.back().init_buffers();
+    std::vector<Vector2r> verts{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
+    polygons.emplace_back(verts, red);
+    polygons.back().init_buffers();
+
+
+    while(render.isOpen()){
+        render.update<Polygon>(polygons.data(), polygons.size());
+    }
+
+    render.end();
+
+    for(auto& p : polygons){ p.delete_buffers(); }
+}

@@ -9,6 +9,11 @@ void EBO::insert(GLuint* vertices, GLsizeiptr size){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
+void EBO::modify(GLuint* data, GLsizeiptr size, GLintptr offset){
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
+
 void EBO::bind(){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 }
