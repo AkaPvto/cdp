@@ -1,6 +1,5 @@
 #include "sat.hpp"
 #include <iostream>
-#include <SFML/Graphics.hpp>
 
 
 namespace CDP{

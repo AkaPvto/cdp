@@ -19,10 +19,10 @@
 #define LIGHT_BLUE          72_u8 , 191_u8, 191_u8, 255_u8
 #define CREAM_RED           205_u8, 70_u8 , 56_u8 , 255_u8
 
-
 uint8_t operator ""_u8(unsigned long long i){
     return uint8_t(i);
 }
+
 struct Color{
     uint8_t r{},g{},b{},a{};
     float   r_f{},g_f{},b_f{},a_f{};

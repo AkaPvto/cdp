@@ -1,6 +1,5 @@
 #include "gjk.hpp"
 #include <iostream>
-#include <SFML/Graphics.hpp>
 
 
 namespace CDP{

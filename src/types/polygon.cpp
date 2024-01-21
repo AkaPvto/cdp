@@ -1,24 +1,15 @@
-#include <SFML/Graphics.hpp>
 #include "polygon.hpp"
 
-namespace CDP{
 
-// Contructing a polygon based on a sf::Shape
-Polygon::Polygon(sf::ConvexShape const& s) : shape{s}{
-    fill();
-}
+namespace CDP{
 
 // Constructing a polygon with an array of vertices and a position
 Polygon::Polygon(std::vector<Vector2r> const& _vertices, Vector2r const& _pos) : position{_pos}{
     setVertices(_vertices);
-    update();
 }
 
 
-// Getters and setters
-sf::ConvexShape const& Polygon::getShape() const{
-    return shape;
-}
+// ############# GETTERS AND SETTERS #############
 
 int Polygon::getVertexCount() const{
     return n_vertices;
@@ -59,7 +50,6 @@ void Polygon::setVertices(std::vector<Vector2r> const& verts){
 
     vertices = verts;
     n_vertices = verts.size();
-    update();
 }
 
 Vector2r Polygon::getPosition() const{
@@ -71,84 +61,51 @@ void Polygon::setPosition(Vector2r const& p){
 }
 
 real Polygon::getBorder() const{
-    return shape.getOutlineThickness();
+    return border_size;
 }
 
 void Polygon::setBorder(real const& b){
     if(b < 0) return;
-    shape.setOutlineThickness(b);
+    border_size = b;
 }
 
-sf::Color const& Polygon::getColor() const{
-    return shape.getFillColor();
+Color const& Polygon::getColor() const{
+    return color;
 }
 
-void Polygon::setColor(sf::Color const& color){
-    shape.setFillColor(color);
+void Polygon::setColor(Color const& c){
+    color = c;
 }
 
-sf::Color const& Polygon::getBorderColor() const{
-    return shape.getOutlineColor();
+Color const& Polygon::getBorderColor() const{
+    return border_color;
 }
 
-void Polygon::setBorderColor(sf::Color const& color){
-    shape.setOutlineColor(color);
-}
-
-void Polygon::draw(RenderStorage const& storage){
-    for(auto v : this->vertices){
-        storage.vertices.push_back(v.x);
-        storage.vertices.push_back(v.y);
-        storage.vertices.push_back(color.r_f);
-        storage.vertices.push_back(color.g_f);
-        storage.vertices.push_back(color.b_f);
-        storage.vertices.push_back(color.a_f);
-    }
-    size_t teselation_index = storage.last_index + this->vertices.size() - 1;
-    for(size_t i = storage.last_index+1; i< teselation_index; ++i){
-        storage.index_buff.push_back(storage.last_index);
-        storage.index_buff.push_back(i);
-        storage.index_buff.push_back(i+1);
-    }
-
-    storage.last_index += vertices.size(); 
+void Polygon::setBorderColor(Color const& color){
+    border_color = color;
 }
 
 
-// Updates the value of the sf::Shape based on the polygon
-void Polygon::update(){
-    shape.setPosition({position.x, position.y});
-    shape.setPointCount(n_vertices);
-    for(size_t i{} ; i < vertices.size() ; ++i){
-        shape.setPoint(i, sf::Vector2f{vertices.at(i).x, vertices.at(i).y});
+// ############# CUSTOM METHODS #############
+
+void Polygon::normalize_vertices(uint32_t width, uint32_t height){
+    uint32_t norm_width = width/2;
+    uint32_t norm_height = height/2;
+    for(auto& v : vertices){
+        v.x = (v.x-norm_width)/norm_width;
+        v.y = (v.y-norm_height)/norm_height;
     }
 }
 
-// Assigns a sf::Shape to a polygon
-void Polygon::assign(sf::ConvexShape const& s){
-    shape = sf::ConvexShape{s};
+void Polygon::draw(){
+    vao.bind();
+    glDrawElements(GL_TRIANGLES, getEBOsize(), GL_UNSIGNED_INT, 0);
 }
 
-// Fills the values of vertices with the atributte shape
-bool Polygon::fill(){
-    return fill(shape);
-}
+int Polygon::getEBOsize(){ return (vertices.size()-2)*3; }
 
-// Fills the values of vertices with the SFML Shape
-bool Polygon::fill(sf::ConvexShape const& s){
-    // Get the polygon's amount of vertices
-    if(n_vertices = s.getPointCount(); n_vertices <= 0) return false;
 
-    // Get the global position
-    position.x = s.getPosition().x;
-    position.y = s.getPosition().y;
-
-    // Get the local vertex coordinates
-    for(size_t i{}; i<n_vertices ; ++i){
-        vertices.emplace_back(Vector2r{s.getPoint(i).x, s.getPoint(i).y});
-    }
-    return true;
-}
+// ############# ITERATION METHODS #############
 
 std::vector<Vector2r>::iterator Polygon::begin(){
     return vertices.begin();
@@ -165,5 +122,6 @@ std::vector<Vector2r>::const_iterator Polygon::begin() const{
 std::vector<Vector2r>::const_iterator Polygon::end() const{
     return vertices.end();
 }
+ 
 
 } // namespace CDP

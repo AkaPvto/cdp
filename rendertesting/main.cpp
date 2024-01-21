@@ -58,7 +58,7 @@ struct Vector2r{
     }
 };
    
-struct Polygon : Drawable{
+struct Polygon{
     Polygon(std::vector<Vector2r> v, Color c) : vertices{v}, color{c}{}
     std::vector<Vector2r> vertices;
     Vector2r position{};
@@ -651,72 +651,6 @@ void RenderSystem::update(DrawType* draw_list, int size){
 bool RenderSystem::isOpen(){
     return !glfwWindowShouldClose(window);
 }
-// void draw_polygon(){
-//     // Process the given data into the vertices and index_buff arrays
-
-
-// }
-
-// struct RenderStorage{
-//     RenderStorage(std::vector<GLfloat>& _v, std::vector<GLuint>& _ib, uint32_t& _li) : vertices{_v}, index_buff{_ib}, last_index{_li}{}
-//     RenderStorage() = delete;
-//     std::vector<GLfloat>& vertices;
-//     std::vector<GLuint>& index_buff;
-//     uint32_t& last_index;
-// };
-
-
-
-// template <typename T>
-// void draw(T const& drawable){
-//     // drawable.draw(RenderStorage(vertices, index_buff, last_index));
-
-// }
-
-// void insert(){
-//     // Insert and configure the data
-//     // vao.bind();
-
-//     // vbo.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-//     // ebo.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
-    
-//     // vao.unbind();
-//     // vbo.unbind();
-//     // ebo.unbind();
-// }
-
-
-// void drawUI(){
-//     ImGui_ImplOpenGL3_NewFrame();
-//     ImGui_ImplGlfw_NewFrame();
-//     ImGui::NewFrame();
-
-//     ImGui::Begin("Window Tittle");
-//     ImGui::Text("Window text!");
-//     ImGui::End();
-
-//     ImGui::Render();
-//     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-// }
-
-// void render(){
-//     // // Draw the background
-//     // glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
-//     // glClear(GL_COLOR_BUFFER_BIT);   
-
-//     // // Draw all the polygons
-//     // // This function will draw all the polygons storaged in the class
-//     // drawAll();
-
-//     // // Draw the interface
-//     // // This function will execute all the logic behind the UI
-//     // drawUI();
-
-
-//     // // Swap the buffer and call the events at the end of the render iteration
-//     // glfwSwapBuffers(window);
-//     // glfwPollEvents();
-// }
 
 void RenderSystem::end(){
     // IMPLEMENT THIS LATER

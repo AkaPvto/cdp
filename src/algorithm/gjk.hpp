@@ -1,5 +1,7 @@
 #include "algorithm.hpp"
 
+#include <array>
+
 namespace CDP{
 
 struct GJK : Algorithm{

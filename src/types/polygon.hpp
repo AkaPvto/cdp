@@ -2,22 +2,21 @@
 
 #include <stdint.h>
 #include <vector>
-#include <SFML/Graphics.hpp>
 
 #include "vector2r.hpp"
 #include "precision.h"
-#include "drawable.hpp"
 #include "color.hpp"
-
+#include "render/VBO.hpp"
+#include "render/EBO.hpp"
+#include "render/VAO.hpp"
 
 namespace CDP{
+struct RenderPolygon;
 
-struct Polygon : Drawable{
+struct Polygon{
     Polygon() = default;
-    Polygon(sf::ConvexShape const&);
     Polygon(std::vector<Vector2r> const&, Vector2r const&);
 
-    sf::ConvexShape const& getShape() const;
     int                 getVertexCount() const;
     Vector2r            getCenter() const;
     Vector2r            getVertex(int) const;
@@ -28,16 +27,15 @@ struct Polygon : Drawable{
     void                setPosition(Vector2r const&);
     real                getBorder() const;
     void                setBorder(real const& b);
-    sf::Color const&    getColor() const;
-    void                setColor(sf::Color const&);
-    sf::Color const&    getBorderColor() const;
-    void                setBorderColor(sf::Color const&);
-    void                draw(RenderStorage const&);
+    Color const&        getColor() const;
+    void                setColor(Color const&);
+    Color const&        getBorderColor() const;
+    void                setBorderColor(Color const&);
 
-    bool fill(sf::ConvexShape const& s);
-    bool fill();
-    void assign(sf::ConvexShape const& s);
-    void update();
+    int getEBOsize();
+    void normalize_vertices(uint32_t width, uint32_t height);
+    void draw();
+
 
     std::vector<Vector2r>::iterator         begin();
     std::vector<Vector2r>::iterator         end();
@@ -50,6 +48,12 @@ struct Polygon : Drawable{
         std::vector<Vector2r> vertices;
         Vector2r position{};
         Color color{};
-        sf::ConvexShape shape{};
+        Color border_color{};
+        real border_size{};
+        VAO vao;
+        VBO vbo;
+        EBO ebo;
+
+    friend RenderPolygon;
 };
 } // namespace CDP

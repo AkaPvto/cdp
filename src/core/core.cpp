@@ -9,102 +9,105 @@
 #include "algorithm/gjk.hpp"
 #include "algorithm/sat.hpp"
 
-#include "sys/render.hpp"
+#include "sys/render.tpp"
 
 // #include "algorithm"
 // #include "algorithm"
 
-sf::Color const green(33, 184, 49,255);
-sf::Color const blue(72, 191, 191, 255);
-sf::Color const red(205,70,56,255);
 
+#define BACKGROUND_COLOR    57_u8 , 57_u8 , 57_u8 , 255_u8
 #define SOFT_GREEN          33_u8 , 184_u8, 49_u8 , 255_u8
 #define LIGHT_BLUE          72_u8 , 191_u8, 191_u8, 255_u8
 #define CREAM_RED           205_u8, 70_u8 , 56_u8 , 255_u8
+#define WHITE               255_u8, 255_u8, 255_u8, 255_u8
 
 
 namespace CDP{
 
 // Constructor of the class
-Core::Core( std::string name, double const h, double const w ) : 
-window{sf::VideoMode(w, h), name}, height{h}, width{w}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init} {
+Core::Core( std::string name, double const w, double const h ) : 
+ renderPol{uint32_t(w), uint32_t(h)}, width{w}, height{h}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init} {
     // window(sf::VideoMode(h, w), "Collisions");
+    render.init(w, h, name.c_str());
+    render.setBackgroundColor(Color(BACKGROUND_COLOR));
 }
 void Core::mouse_movement(){
-    if(dynamic_cast<AABB*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+    if(dynamic_cast<AABB*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_A)){
         delete_shapes();
         initialize(0);
     }
 
-    if(dynamic_cast<SAT*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+    if(dynamic_cast<SAT*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_S)){
         delete_shapes();
         initialize(1);
     }
 
-    if(dynamic_cast<GJK*>(algth) == nullptr && sf::Keyboard::isKeyPressed(sf::Keyboard::G)){
+    if(dynamic_cast<GJK*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_G)){
         delete_shapes();
         initialize(2);
     }
 
-    sf::Vector2i localPos = sf::Mouse::getPosition(window);
+    Vector2r localPos;
+    render.getMousePos(localPos);
+    localPos.y = height - localPos.y;
     Vector2r center_diff = polygons.at(0).getCenter();
-    polygons[0].setPosition(Vector2r{localPos.x - center_diff.x, localPos.y - center_diff.y});
-    for(Polygon& p : polygons){
-        p.update();
-    }
+    polygons[0].setPosition(localPos - center_diff);
+    renderPol.update_position(polygons[0]);
 }
 
 // Run the main program
 void Core::run(){
-    sf::Color(26);
+    // Initialize the program with the base state: AABB Collisions
     initialize(0);
-    
-    while(window.isOpen()){
-        sf::Event event;
-        while(window.pollEvent(event)){
-            if(event.type == sf::Event::Closed) window.close();
-        }
 
+    while(render.isOpen()){
         mouse_movement();
         check_collision();
-        window.clear();
-        draw_collision();
+        // draw_collision();
         draw();
-        window.display();       
     }
     delete_shapes();
+    render.end();
 }
 
 void Core::check_collision(){    
     if(algth != nullptr){
         if(algth->colide(polygons[0], polygons[1])){
-            polygons[0].setColor(red);
-            polygons[1].setColor(red);
+            polygons[0].setColor(Color(CREAM_RED));
+            renderPol.update_color(polygons[0]);
+            polygons[1].setColor(Color(CREAM_RED));
+            renderPol.update_color(polygons[1]);
         }
         else{
-            polygons[0].setColor(green);
-            polygons[1].setColor(blue);
+            polygons[0].setColor(Color(SOFT_GREEN));
+            renderPol.update_color(polygons[0]);
+            polygons[1].setColor(Color(LIGHT_BLUE));
+            renderPol.update_color(polygons[1]);
         }
     }
 }
 
 void Core::draw_collision(){
-    auto size = window.getSize();
-    DrawList draw_l{};
-    algth->draw(draw_l, polygons[0], polygons[1], size.x, size.y);
-    for(auto drawable : draw_l){
-        if(drawable == nullptr) continue;
-        window.draw(*drawable);
-    }
+    // auto size = window.getSize();
+    // DrawList draw_l{};
+    // algth->draw(draw_l, polygons[0], polygons[1], size.x, size.y);
+    // for(auto drawable : draw_l){
+    //     if(drawable == nullptr) continue;
+    //     window.draw(*drawable);
+    // }
 }
 
 void Core::draw(){
-    for(Polygon const& s : polygons){
-        window.draw(s.getShape());
-    }
+    // for(auto& p : polygons){
+    //     renderPol.update_buffers(p);
+    // }
+    render.update<Polygon>(polygons.data(), polygons.size());
 }
 
 void Core::delete_shapes(){
+    for(auto& p : polygons){
+        renderPol.delete_buffers(p);
+    }
     polygons.clear();
 
     if(algth != nullptr){ delete(algth); algth = nullptr;}
@@ -121,19 +124,21 @@ void Core::initialize(uint32_t const type){
 void Core::AABB_init(){
     std::vector<Vector2r> p1_vertices{{0,0}, {200,0}, {200,330},{0,330}};
     Polygon p1(p1_vertices, {300,300});
-    p1.setColor(green);
+    p1.setColor(Color(SOFT_GREEN));
     p1.setBorder(5);
-    p1.setBorderColor(sf::Color::White);
+    p1.setBorderColor(Color(WHITE));
 
     std::vector<Vector2r> p2_vertices{{0,0}, {300,0}, {300,200}, {0,200}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(blue);
+    p2.setColor(Color(LIGHT_BLUE));
     p2.setBorder(5);
-    p2.setBorderColor(sf::Color::White);
+    p2.setBorderColor(Color(WHITE));
 
 
     polygons.emplace_back(p1);
+    renderPol.init_buffers(polygons.back());
     polygons.emplace_back(p2);
+    renderPol.init_buffers(polygons.back());
 
     algth = new AABB();
 
@@ -152,19 +157,21 @@ void Core::AABB_init(){
 void Core::SAT_init(){
     std::vector<Vector2r> p1_vertices{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
     Polygon p1(p1_vertices, {300,300});
-    p1.setColor(green);
+    p1.setColor(Color(SOFT_GREEN));
     p1.setBorder(5);
-    p1.setBorderColor(sf::Color::White);
+    p1.setBorderColor(Color(WHITE));
 
     std::vector<Vector2r> p2_vertices{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(blue);
+    p2.setColor(Color(LIGHT_BLUE));
     p2.setBorder(5);
-    p2.setBorderColor(sf::Color::White);
+    p2.setBorderColor(Color(WHITE));
 
 
     polygons.emplace_back(p1);
+    renderPol.init_buffers(polygons.back());
     polygons.emplace_back(p2);
+    renderPol.init_buffers(polygons.back());
 
     algth = new SAT();
 }
@@ -173,19 +180,21 @@ void Core::SAT_init(){
 void Core::GJK_init(){
     std::vector<Vector2r> p1_vertices{{50,0}, {300,0}, {300,200}, {50,200}, {0,100}};
     Polygon p1{p1_vertices, {300,300}};
-    p1.setColor(green);
+    p1.setColor(Color(SOFT_GREEN));
     // p1.setBorder(5);
-    // p1.setBorderColor(sf::Color::White);
+    // p1.setBorderColor(Color(WHITE));
 
     std::vector<Vector2r> p2_vertices{{0,0}, {200,0}, {200,330}, {0,330}};
     Polygon p2(p2_vertices, {350,200});
-    p2.setColor(blue);
+    p2.setColor(Color(LIGHT_BLUE));
     // p2.setBorder(5);
-    // p2.setBorderColor(sf::Color::White);
+    // p2.setBorderColor(Color(WHITE));
 
 
     polygons.emplace_back(p1);
+    renderPol.init_buffers(polygons.back());
     polygons.emplace_back(p2);
+    renderPol.init_buffers(polygons.back());
     
     algth = new GJK();
 }
