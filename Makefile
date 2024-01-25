@@ -24,17 +24,22 @@ endef
 # 	CONFIG
 ##################################
 
-APP 	:= collisions
-CCFLAGS := -Wall -pedantic
-CFLAGS	:= $(CCFLAGS)
-CC		:= g++
-C		:= gcc
-MKDIR	:= mkdir -p # Create sub-folders in one shot
-SRC		:= src
-OBJ		:= obj
+APP 		:= collisions
+CCFLAGS 	:= -Wall -pedantic -std=c++20
+CFLAGS		:= $(CCFLAGS)
+CC			:= g++
+C			:= gcc
+MKDIR		:= mkdir -p # Create sub-folders in one shot
+SRC			:= src
+OBJ			:= obj
+LIBDIR		:= lib
+LIBBINDIR	:= $(LIBDIR)/binlibs
+ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libsfml-graphics.so.2.5 $(LIBBINDIR)/libsfml-system.so.2.5 $(LIBBINDIR)/libsfml-window.so.2.5 $(LIBBINDIR)/libimgui.a $(LIBBINDIR)/libglfw.so.3 $(LIBBINDIR)/libglad.a $(LIBBINDIR)/libimgui-sfml.a
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
-LIBS		:= -Llib -Wl,-rpath=lib/
+LIBS		:= -Llib $(ALLBINLIBS) -Wl,-rpath=lib/
+# Include directories, to use relative includes (the ones with "<>") and get the static libraries from the proyect
+INCDIRS		:= -I$(SRC) -I$(LIBDIR)
 # Get all directories and subdirectories of src
 SUBDIRS		:= $(shell find $(SRC)/ -type d)
 # Substitute all src directories and subdirectories with obj/ as it's root
@@ -58,10 +63,10 @@ $(APP) : $(OBJSUBDIRS) $(ALLOBJ)
 	$(CC) -o $(APP) $(ALLOBJ) $(LIBS)
 
 # C++ compiling
-$(foreach F,$(ALLCPP),$(eval $(call COMPILE,$(CC),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CCFLAGS))))
+$(foreach F,$(ALLCPP),$(eval $(call COMPILE,$(CC),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CCFLAGS) $(INCDIRS))))
 
 # C compiling
-$(foreach F,$(ALLC),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS))))
+$(foreach F,$(ALLC),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS) $(INCDIRS))))
 
 $(OBJSUBDIRS) : 
 	$(MKDIR) $(OBJSUBDIRS)
