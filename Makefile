@@ -68,6 +68,7 @@ $(foreach F,$(ALLCPP),$(eval $(call COMPILE,$(CC),$(call C2O,$(F)),$(F),$(call C
 # C compiling
 $(foreach F,$(ALLC),$(eval $(call COMPILE,$(C),$(call C2O,$(F)),$(F),$(call C2H,$(F)),$(CFLAGS) $(INCDIRS))))
 
+# Create obj directories hierarchy
 $(OBJSUBDIRS) : 
 	$(MKDIR) $(OBJSUBDIRS)
 
