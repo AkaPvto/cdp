@@ -50,9 +50,30 @@ void Core::mouse_movement(){
     Vector2r localPos;
     render.getMousePos(localPos);
     localPos.y = height - localPos.y;
-    Vector2r center_diff = polygons.at(0).getCenter();
-    polygons[0].setPosition(localPos - center_diff);
-    renderPol.update_position(polygons[0]);
+    // Vector2r center_diff = polygons.at(0).getCenter();
+    // polygons[0].setPosition(localPos - center_diff);
+    // renderPol.update_position(polygons[0]);
+
+    if(dragg_index >= 0){
+        polygons.at(dragg_index).move(localPos - drag_starting_pos);
+        renderPol.update_position(polygons.at(dragg_index));
+    }
+
+    if(render.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
+        if(dragg_index <= 0 && !dragging){
+            for(size_t i{} ; i < polygons.size() ; ++i){
+                if(drag_n_drop(polygons.at(i), localPos)) dragg_index = i;
+            }
+            dragging = true;
+        }
+        drag_starting_pos = localPos;
+    }
+    else{
+        dragg_index = -1;
+        dragging = false;
+    }
+
+    std::cout << "DRAGGING¿?: " << dragging << " | What am I dragging: " << dragg_index << "\n";
 }
 
 // Run the main program
@@ -73,10 +94,10 @@ void Core::run(){
 void Core::check_collision(){    
     if(algth != nullptr){
         if(algth->colide(polygons[0], polygons[1])){
-            polygons[0].setColor(Color(CREAM_RED));
-            renderPol.update_color(polygons[0]);
-            polygons[1].setColor(Color(CREAM_RED));
-            renderPol.update_color(polygons[1]);
+            // polygons[0].setColor(Color(CREAM_RED));
+            // renderPol.update_color(polygons[0]);
+            // polygons[1].setColor(Color(CREAM_RED));
+            // renderPol.update_color(polygons[1]);
         }
         else{
             polygons[0].setColor(Color(SOFT_GREEN));
@@ -197,6 +218,23 @@ void Core::GJK_init(){
     renderPol.init_buffers(polygons.back());
     
     algth = new GJK();
+}
+
+bool Core::drag_n_drop(Polygon const& p, Vector2r const& mouse){
+    for(int i{}; i<p.getVertexCount() ; ++i){
+        // Obtain the current axis: vertex(1) - vertex(0). The i+1 index should be capped to the ammount of vertex, use the module to keep it in bounds
+        // Then use the "getNormal()" function to obtain the normal of the edge we're currently working on
+        Vector2r edge_normal = (p.getVertex((i+1)%p.getVertexCount()) - p.getVertex(i)).getNormal();
+        Vector2r local_mouse = (mouse - p.getVertex(i));
+
+        // We'll consider one vector is in range of another if the absolute value of the angular distance is less than 90. 
+        // If the dot product recieves a negative number we're not in range
+        int in_range = edge_normal * local_mouse;
+        // For any edge in wich the point is in range of the normal, we cut the execution since the point is already out of the polygon
+        if(in_range < 0) return false;
+    }
+
+    return true;
 }
 
 

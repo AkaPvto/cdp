@@ -80,6 +80,10 @@ bool RenderSystem::isKeyPressed(int key){
     return glfwGetKey(window, key) == GLFW_PRESS;
 }
 
+bool RenderSystem::isMousePressed(int key){
+    return glfwGetMouseButton(window, key) == GLFW_PRESS;
+}
+
 void RenderSystem::setBackgroundColor(Color const& c){
     background_color = c;
 }

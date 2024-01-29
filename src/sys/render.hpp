@@ -28,6 +28,7 @@ struct RenderSystem{
     // Temporal, migrar al input system
     void getMousePos(Vector2r& v);
     bool isKeyPressed(int key);
+    bool isMousePressed(int key);
 
     void setBackgroundColor(Color const& c);
 

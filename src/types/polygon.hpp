@@ -25,6 +25,7 @@ struct Polygon{
     void                setVertices(std::vector<Vector2r> const&);
     Vector2r            getPosition() const;
     void                setPosition(Vector2r const&);
+    void                move(Vector2r const&);
     real                getBorder() const;
     void                setBorder(real const& b);
     Color const&        getColor() const;

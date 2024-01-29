@@ -29,7 +29,7 @@ Vector2r Polygon::getCenter() const{
 Vector2r Polygon::getVertex(int index) const{
     if(index > n_vertices) return {-1,-1};
 
-    return {vertices.at(index).x + position.x, vertices.at(index).y + position.y};
+    return {vertices.at(index) + position};
 }
 
 Vector2r Polygon::getLocalVertex(int index) const{
@@ -58,6 +58,10 @@ Vector2r Polygon::getPosition() const{
 
 void Polygon::setPosition(Vector2r const& p){
     position = p;
+}
+
+void Polygon::move(Vector2r const& v){
+    position += v;
 }
 
 real Polygon::getBorder() const{

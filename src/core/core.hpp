@@ -29,6 +29,13 @@ struct Core{
     void AABB_init();
     void SAT_init();
     void GJK_init();
+
+    // Input
+    bool drag_n_drop(Polygon const& p, Vector2r const& mouse);
+    int dragg_index = -1;
+    bool dragging = false;
+    Vector2r drag_starting_pos{-1,-1};
+
     private:
         RenderSystem render;
         RenderPolygon renderPol;
