@@ -36,6 +36,15 @@ struct Core{
     bool dragging = false;
     Vector2r drag_starting_pos{-1,-1};
 
+
+    // UI management
+    void update_ui();
+    void AABB_ui();
+    void SAT_ui();
+    void GJK_ui();
+
+
+
     private:
         RenderSystem render;
         RenderPolygon renderPol;
@@ -46,6 +55,10 @@ struct Core{
         std::array<Core::FuncType, 3> initialize_types;
         Algorithm* algth{};
 
+        // UI management attributes
+        size_t mode_index{};
+        std::array<Core::FuncType, 3> mode_ui;
+        bool draw_algth{false};
         
 
 };

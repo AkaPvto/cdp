@@ -26,7 +26,9 @@ namespace CDP{
 
 // Constructor of the class
 Core::Core( std::string name, double const w, double const h ) : 
- renderPol{uint32_t(w), uint32_t(h)}, width{w}, height{h}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init} {
+ renderPol{uint32_t(w), uint32_t(h)}, width{w}, height{h}, 
+ initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init},
+ mode_ui{&Core::AABB_ui, &Core::SAT_ui, &Core::GJK_ui} {
     // window(sf::VideoMode(h, w), "Collisions");
     render.init(w, h, name.c_str());
     render.setBackgroundColor(Color(BACKGROUND_COLOR));
@@ -72,8 +74,6 @@ void Core::mouse_movement(){
         dragg_index = -1;
         dragging = false;
     }
-
-    std::cout << "DRAGGING¿?: " << dragging << " | What am I dragging: " << dragg_index << "\n";
 }
 
 // Run the main program
@@ -94,10 +94,10 @@ void Core::run(){
 void Core::check_collision(){    
     if(algth != nullptr){
         if(algth->colide(polygons[0], polygons[1])){
-            // polygons[0].setColor(Color(CREAM_RED));
-            // renderPol.update_color(polygons[0]);
-            // polygons[1].setColor(Color(CREAM_RED));
-            // renderPol.update_color(polygons[1]);
+            polygons[0].setColor(Color(CREAM_RED));
+            renderPol.update_color(polygons[0]);
+            polygons[1].setColor(Color(CREAM_RED));
+            renderPol.update_color(polygons[1]);
         }
         else{
             polygons[0].setColor(Color(SOFT_GREEN));
@@ -119,10 +119,9 @@ void Core::draw_collision(){
 }
 
 void Core::draw(){
-    // for(auto& p : polygons){
-    //     renderPol.update_buffers(p);
-    // }
     render.update<Polygon>(polygons.data(), polygons.size());
+    update_ui();
+    render.resolve();
 }
 
 void Core::delete_shapes(){

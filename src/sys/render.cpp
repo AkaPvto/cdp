@@ -68,6 +68,12 @@ void RenderSystem::end(){
     glfwTerminate();
 }
 
+// Swaps the buffer and process the poll events
+void RenderSystem::resolve(){
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
 // Temporal, migrar al input system
 void RenderSystem::getMousePos(Vector2r& v){
     double x, y;

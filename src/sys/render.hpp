@@ -20,10 +20,14 @@ struct Vector2r; // Temporal, migrar al input system
 struct RenderSystem{
     void init(int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT, const char* name = "Window");
     void end();
+    void resolve();
     bool isOpen();
 
     template <typename DrawType>
     void update(DrawType*, int);
+
+  
+
 
     // Temporal, migrar al input system
     void getMousePos(Vector2r& v);
@@ -36,7 +40,8 @@ struct RenderSystem{
         GLFWwindow* window{};
         ShaderProgram shader_p;
         Color background_color{};
-
+        void(*user_interface)();
 };
+
 
 } // namespace CDP
