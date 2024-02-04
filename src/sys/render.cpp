@@ -34,7 +34,8 @@ void RenderSystem::init(int width, int height, const char* name){
     // ImGui initialization and link with the window
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    // ImGuiIO& io = // <== Check if storaging the ImGui ID may be needed in the future 
+    ImGui::GetIO();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
     ImGui::StyleColorsDark();
