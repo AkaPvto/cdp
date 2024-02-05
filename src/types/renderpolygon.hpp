@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
 #include "polygon.hpp"
-    
+
 namespace CDP{
 
 struct RenderPolygon{
+    using GLfloat_ptr = std::shared_ptr<GLfloat>;
+    using GLuint_ptr = std::shared_ptr<GLuint>;
+
     RenderPolygon(uint32_t, uint32_t);
     void update_color(Polygon&);
     void update_position(Polygon&);

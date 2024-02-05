@@ -221,7 +221,7 @@ struct Polygon{
     
 };
 
-int main_(){
+int main(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -250,24 +250,24 @@ int main_(){
     Color blue(BLUE_LIGHT);
 
 
-    std::vector<Polygon> polygons;
+    // std::vector<Polygon> polygons;
     
-    std::vector<Vector2r> v2{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
-    polygons.emplace_back(v2, blue);
-    // polygons.back().normalize_vertices(1280, 720);
+    // std::vector<Vector2r> v2{{150, 50}, {300,50}, {400,200}, {300,350}, {150,350}, {50,200}};
+    // polygons.emplace_back(v2, blue);
+    // // polygons.back().normalize_vertices(1280, 720);
 
-    std::vector<Vector2r> verts{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
-    polygons.emplace_back(verts, red);
-    // polygons.back().normalize_vertices(1280, 720);
-
-
+    // std::vector<Vector2r> verts{{200,50}, {340,155}, {300,350}, {100,350}, {50,150}};
+    // polygons.emplace_back(verts, red);
+    // // polygons.back().normalize_vertices(1280, 720);
 
 
-    // GLfloat vertices[] = {
-    //     -0.5f, -0.5f * float(sqrt(3)) / 3,     red.r_f, red.g_f, red.b_f, red.a_f,
-    //     0.5f, -0.5f * float(sqrt(3)) / 3,      red.r_f, red.g_f, red.b_f, red.a_f,
-    //     0.0f, 0.5f * float(sqrt(3)) *2 / 3,    red.r_f, red.g_f, red.b_f, red.a_f
-    // };
+
+
+    GLfloat vertices_[] = {
+        -0.5f, -0.5f * float(sqrt(3)) / 3,     red.r_f, red.g_f, red.b_f, red.a_f,
+        0.5f, -0.5f * float(sqrt(3)) / 3,      red.r_f, red.g_f, red.b_f, red.a_f,
+        0.0f, 0.5f * float(sqrt(3)) *2 / 3,    red.r_f, red.g_f, red.b_f, red.a_f
+    };
     GLuint last_index = 0;
     std::vector<GLfloat> vertices;
     // GLfloat vertices[] = {
@@ -290,76 +290,76 @@ int main_(){
     // Pasar a la funcion de openGL la direccion de memoria del inicio del vector usando vector.begin()
     // Y el tamaño usando vector.size()
     // Con esto deberia de ser suficiente para que openGL no se coje y utilice los datos de std::vector
-    auto add_polygons = [&](){
-        for(auto& p : polygons){
-            for(auto v : p.vertices){
-                vertices.push_back(v.x);
-                vertices.push_back(v.y);
-                vertices.push_back(p.color.r_f);
-                vertices.push_back(p.color.g_f);
-                vertices.push_back(p.color.b_f);
-                vertices.push_back(p.color.a_f);
-            }
-            for(size_t i = last_index+1; i<(last_index+p.vertices.size()-1); ++i){
-                index_buff.push_back(last_index);
-                index_buff.push_back(i);
-                index_buff.push_back(i+1);
-            }
+    // auto add_polygons = [&](){
+    //     for(auto& p : polygons){
+    //         for(auto v : p.vertices){
+    //             vertices.push_back(v.x);
+    //             vertices.push_back(v.y);
+    //             vertices.push_back(p.color.r_f);
+    //             vertices.push_back(p.color.g_f);
+    //             vertices.push_back(p.color.b_f);
+    //             vertices.push_back(p.color.a_f);
+    //         }
+    //         for(size_t i = last_index+1; i<(last_index+p.vertices.size()-1); ++i){
+    //             index_buff.push_back(last_index);
+    //             index_buff.push_back(i);
+    //             index_buff.push_back(i+1);
+    //         }
 
-            last_index += p.vertices.size(); 
-        }
+    //         last_index += p.vertices.size(); 
+    //     }
 
-    };
-    add_polygons();
+    // };
+    // add_polygons();
 
-    auto add_polygon = [&](int p){
-        vertices.clear();
-        index_buff.clear();
+    // auto add_polygon = [&](int p){
+    //     vertices.clear();
+    //     index_buff.clear();
 
-        auto& polygon = polygons.at(p);
+    //     auto& polygon = polygons.at(p);
 
-        // (x + y + color data (4 values))
-        int vertex_size = 6;
-        // Vertices size * vertex size
-        int buffer_size = polygon.vertices.size()*(vertex_size);
-        //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
-        int index_size = (polygon.vertices.size()-2)*3;
+    //     // (x + y + color data (4 values))
+    //     int vertex_size = 6;
+    //     // Vertices size * vertex size
+    //     int buffer_size = polygon.vertices.size()*(vertex_size);
+    //     //(Ammount of triangles after teselating a polygon)*(number of vertices of a triangle) => (n_vertices-2)*(3)
+    //     int index_size = (polygon.vertices.size()-2)*3;
 
-        // Insert the data of each vertex into the buffer_data
-        int count = 0;
-        for(auto v : polygon.vertices){
-            vertices.push_back(v.x);
-            vertices.push_back(v.y);
-            vertices.push_back(polygon.color.r_f);
-            vertices.push_back(polygon.color.g_f);
-            vertices.push_back(polygon.color.b_f);
-            vertices.push_back(polygon.color.a_f);
-        }
+    //     // Insert the data of each vertex into the buffer_data
+    //     int count = 0;
+    //     for(auto v : polygon.vertices){
+    //         vertices.push_back(v.x);
+    //         vertices.push_back(v.y);
+    //         vertices.push_back(polygon.color.r_f);
+    //         vertices.push_back(polygon.color.g_f);
+    //         vertices.push_back(polygon.color.b_f);
+    //         vertices.push_back(polygon.color.a_f);
+    //     }
         
-        // Insert the index of each vertex into the index_data
-        for(size_t i = 1; i<polygon.vertices.size()-1; ++i){
-            index_buff.push_back(0);
-            index_buff.push_back(i);
-            index_buff.push_back(i+1);
-        }
-    };
+    //     // Insert the index of each vertex into the index_data
+    //     for(size_t i = 1; i<polygon.vertices.size()-1; ++i){
+    //         index_buff.push_back(0);
+    //         index_buff.push_back(i);
+    //         index_buff.push_back(i+1);
+    //     }
+    // };
 
-    int count = 0;
-    for(auto v : vertices){
-        std::cout << "Vertex " << count << ": " << v << "\n";
-        if(++count >= 6){
-            count = 0;
-            std::cout << std::endl;
-        }
-    }
-    count = 0;
-    for(auto i : index_buff){
-        std::cout << "Vertex " << count << ": " << i << "\n";
-        if(++count >= 3){
-            count = 0;
-            std::cout << std::endl;
-        }
-    }
+    // int count = 0;
+    // for(auto v : vertices){
+    //     std::cout << "Vertex " << count << ": " << v << "\n";
+    //     if(++count >= 6){
+    //         count = 0;
+    //         std::cout << std::endl;
+    //     }
+    // }
+    // count = 0;
+    // for(auto i : index_buff){
+    //     std::cout << "Vertex " << count << ": " << i << "\n";
+    //     if(++count >= 3){
+    //         count = 0;
+    //         std::cout << std::endl;
+    //     }
+    // }
 
     std::cout << "Empezamos el programa de renderizado\n";
 
@@ -385,91 +385,92 @@ int main_(){
     // glDeleteShader(vertexShader);
     // glDeleteShader(fragmentShader);
     // glLinkProgram(shaderProgram);
-    VAO vao1{};
-    VAO vao2{};
-    VBO vbo1{};
-    VBO vbo2{};
-    EBO ebo1{};
-    EBO ebo2{};
+    // VAO vao1{};
+    // VAO vao2{};
+    // VBO vbo1{};
+    // VBO vbo2{};
+    // EBO ebo1{};
+    // EBO ebo2{};
 
             
-    // Bindeo el VAO
-    vao1.bind();
+    // // Bindeo el VAO
+    // vao1.bind();
     
-    // Rellena "vertices" y "index_buff" con los datos del poligono pasado por parametro
-    add_polygon(1);
-    // Guardas el tamaño del index_buff para despues usarlo en glDrawElements
-    int index_size_1 = index_buff.size();
-    // Insertas los datos en el VBO
-    vbo1.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-    // Insertas los datos en el EBO
-    ebo1.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    // // Rellena "vertices" y "index_buff" con los datos del poligono pasado por parametro
+    // add_polygon(1);
+    // // Guardas el tamaño del index_buff para despues usarlo en glDrawElements
+    // int index_size_1 = index_buff.size();
+    // // Insertas los datos en el VBO
+    // vbo1.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    // // Insertas los datos en el EBO
+    // ebo1.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
     
-    // Bindeo el VBO
-    vbo1.bind();
-    // Añadir los atributos al VAO
-    vao1.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
-    vao1.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
-    // Unbineamos el VAO
-    vao1.unbind();
+    // // Bindeo el VBO
+    // vbo1.bind();
+    // // Añadir los atributos al VAO
+    // vao1.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+    // vao1.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+    // // Unbineamos el VAO
+    // vao1.unbind();
     
-    vao2.bind();
-    add_polygon(0);
-    int index_size_2 = index_buff.size();
-    vbo2.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
-    ebo2.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
+    // vao2.bind();
+    // add_polygon(0);
+    // int index_size_2 = index_buff.size();
+    // vbo2.insert(vertices.data(), sizeof(GLfloat)*vertices.size());
+    // ebo2.insert(index_buff.data(), sizeof(GLuint)*index_buff.size());
     
-    vbo2.bind();
-    vao2.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
-    vao2.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
-    vao2.unbind();
+    // vbo2.bind();
+    // vao2.addAttrib(0, 2, GL_FLOAT, 6*sizeof(float), (void*)0);
+    // vao2.addAttrib(1, 4, GL_FLOAT, 6*sizeof(float), (void*)(2*sizeof(float)));
+    // vao2.unbind();
     
-    vao1.unbind();
-    vao2.unbind();
-    vbo1.unbind();
-    vbo2.unbind();
-    ebo1.unbind();
-    ebo2.unbind();
+    // vao1.unbind();
+    // vao2.unbind();
+    // vbo1.unbind();
+    // vbo2.unbind();
+    // ebo1.unbind();
+    // ebo2.unbind();
     
     
-    polygons.at(0).update_buffers();
-    polygons.at(1).update_buffers();
+    // polygons.at(0).update_buffers();
+    // polygons.at(1).update_buffers();
 
     
     
-    // GLuint VAO;
-    // GLuint VBO;
-    // GLuint EBO;
+    GLuint VAO;
+    GLuint VBO;
 
-    // glGenVertexArrays(1, &VAO);
+    glGenVertexArrays(1, &VAO);
 
-    // glGenBuffers(1, &VBO);
-    // glGenBuffers(1, &EBO);
+    glGenBuffers(1, &VBO);
     
-    // glBindVertexArray(VAO);
+    glBindVertexArray(VAO);
 
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
-    // // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*index_buff.size(), index_buff.data(), GL_STATIC_DRAW);
 
-    // // glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset)
-    // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(0);
 
 
     
-    // // glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset)
-    // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(2* sizeof(float)));
-    // glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset)
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (void*)(2* sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     
-    // glBindVertexArray(0);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     Color bkg(BACKGROUND_COLOR);
+    // glClearColor(bkg.r_f, bkg.g_f, bkg.b_f, bkg.a_f);
+    // glClear(GL_COLOR_BUFFER_BIT);
+    // glfwSwapBuffers(window);
+
     int c{};
     std::vector<Vector2r> vrts;
     Color col;
@@ -487,12 +488,12 @@ int main_(){
         // vao1.bind();
         // glDrawElements(GL_TRIANGLES, index_size_1, GL_UNSIGNED_INT, 0);
         
-        for(auto& p : polygons){
-            p.vao.bind();
-            glDrawElements(GL_TRIANGLES, (p.vertices.size()-2)*3,GL_UNSIGNED_INT, 0);
-        }
-        // glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        // for(auto& p : polygons){
+        //     p.vao.bind();
+        //     glDrawElements(GL_TRIANGLES, (p.vertices.size()-2)*3,GL_UNSIGNED_INT, 0);
+        // }
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         // // glDrawElements(primitive, numIndices, typeIndices, index of indices (?))
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -508,35 +509,35 @@ int main_(){
 
 
 
-        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            if(c++ <= 0){
-                float w = std::rand()%SCREEN_WIDTH;
-                float h = std::rand()%SCREEN_HEIGHT;
+        // if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        //     if(c++ <= 0){
+        //         float w = std::rand()%SCREEN_WIDTH;
+        //         float h = std::rand()%SCREEN_HEIGHT;
 
-                (polygons.end()-1)->update_position(w, h);
+        //         (polygons.end()-1)->update_position(w, h);
 
 
-                vrts.clear();
-                std::cout << "A is pressed\n";
-                auto pol = polygons.begin();
-                for(auto v : pol->vertices){
-                    vrts.push_back(v);
-                }
-                col = pol->color;
-                pos_t = pol->position;
-                pol->delete_buffers();
-                polygons.erase(polygons.begin());
+        //         vrts.clear();
+        //         std::cout << "A is pressed\n";
+        //         auto pol = polygons.begin();
+        //         for(auto v : pol->vertices){
+        //             vrts.push_back(v);
+        //         }
+        //         col = pol->color;
+        //         pos_t = pol->position;
+        //         pol->delete_buffers();
+        //         polygons.erase(polygons.begin());
 
-            }
-        }
-        else{
-            if(c>0){
-                polygons.emplace_back(vrts, green);
-                polygons.back().position = pos_t;
-                polygons.back().update_buffers();
-            }
-            c=0;
-        } 
+        //     }
+        // }
+        // else{
+        //     if(c>0){
+        //         polygons.emplace_back(vrts, green);
+        //         polygons.back().position = pos_t;
+        //         polygons.back().update_buffers();
+        //     }
+        //     c=0;
+        // } 
 
         
 
@@ -544,16 +545,16 @@ int main_(){
         glfwPollEvents();
     }
 
-    // glDeleteVertexArrays(1, &VAO);
-    // glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
     // glDeleteBuffers(1, &EBO);
     // glDeleteProgram(shaderProgram);
-    vao1.destroy();
-    vao2.destroy();
-    vbo1.destroy();
-    ebo1.destroy();
-    vbo2.destroy();
-    ebo2.destroy();
+    // vao1.destroy();
+    // vao2.destroy();
+    // vbo1.destroy();
+    // ebo1.destroy();
+    // vbo2.destroy();
+    // ebo2.destroy();
     // for(auto& p: polygons){
     //     p.delete_buffers();
     // }
@@ -666,7 +667,7 @@ void RenderSystem::end(){
     glfwTerminate();
 }
 
-int main(){
+int main_(){
     RenderSystem render;
     render.init();
     Color red(RED_CREAM);

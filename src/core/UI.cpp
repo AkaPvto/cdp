@@ -19,12 +19,14 @@ void Core::update_ui(){
         initialize(mode_index);
         draw_algth = false;
     }
+    ImGui::SameLine();
     if(ImGui::Button("SAT")) {
         mode_index = 1;
         delete_shapes();
         initialize(mode_index);
         draw_algth = false;
     }
+    ImGui::SameLine();
     if(ImGui::Button("GJK")) {
         mode_index = 2;
         delete_shapes();

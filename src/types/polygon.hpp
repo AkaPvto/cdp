@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "vector2r.hpp"
-#include "precision.h"
 #include "color.hpp"
 #include "render/VBO.hpp"
 #include "render/EBO.hpp"
