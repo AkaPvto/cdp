@@ -26,35 +26,18 @@ namespace CDP{
 
 // Constructor of the class
 Core::Core( std::string name, double const w, double const h ) : 
- renderPol{uint32_t(w), uint32_t(h)}, width{w}, height{h}, 
+ renderPol{uint32_t(w), uint32_t(h)}, renderLine{uint32_t(w), uint32_t(h)}, width{w}, height{h}, 
  initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init},
  mode_ui{&Core::AABB_ui, &Core::SAT_ui, &Core::GJK_ui} {
     // window(sf::VideoMode(h, w), "Collisions");
     render.init(w, h, name.c_str());
     render.setBackgroundColor(Color(BACKGROUND_COLOR));
+
 }
 void Core::mouse_movement(){
-    if(dynamic_cast<AABB*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_A)){
-        delete_shapes();
-        initialize(0);
-    }
-
-    if(dynamic_cast<SAT*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_S)){
-        delete_shapes();
-        initialize(1);
-    }
-
-    if(dynamic_cast<GJK*>(algth) == nullptr && render.isKeyPressed(GLFW_KEY_G)){
-        delete_shapes();
-        initialize(2);
-    }
-
     Vector2r localPos;
     render.getMousePos(localPos);
     localPos.y = height - localPos.y;
-    // Vector2r center_diff = polygons.at(0).getCenter();
-    // polygons[0].setPosition(localPos - center_diff);
-    // renderPol.update_position(polygons[0]);
 
     if(dragg_index >= 0){
         polygons.at(dragg_index).move(localPos - drag_starting_pos);
@@ -81,11 +64,15 @@ void Core::run(){
     // Initialize the program with the base state: AABB Collisions
     initialize(0);
 
+    std::cout << "Initialized\n";
     while(render.isOpen()){
         mouse_movement();
+        std::cout << "Mouse movement completed\n";
         check_collision();
+        std::cout << "Collision checing\n";
         // draw_collision();
         draw();
+        std::cout << "Drawing\n";
     }
     delete_shapes();
     render.end();
@@ -119,16 +106,26 @@ void Core::draw_collision(){
 }
 
 void Core::draw(){
+    render.update<Line>(lines.data(), lines.size());
     render.update<Polygon>(polygons.data(), polygons.size());
     update_ui();
     render.resolve();
 }
 
 void Core::delete_shapes(){
+    // First destroy all the polygons' buffers
     for(auto& p : polygons){
         renderPol.delete_buffers(p);
     }
+    // Then clear the polygons' instances
     polygons.clear();
+
+    // First destroy all the lines' buffers
+    for(auto& l : lines){
+        renderLine.delete_buffers(l);
+    }
+    // Then clear the lines' instances
+    lines.clear();
 
     if(algth != nullptr){ delete(algth); algth = nullptr;}
 }
@@ -159,6 +156,15 @@ void Core::AABB_init(){
     renderPol.init_buffers(polygons.back());
     polygons.emplace_back(p2);
     renderPol.init_buffers(polygons.back());
+
+
+    Line line(Vector2r{900, 500}, Vector2r{1300, 800});
+    line.setWidth(4);
+    line.setSmooth(true);
+
+
+    lines.emplace_back(line);
+    renderLine.init_buffers(lines.back());
 
     algth = new AABB();
 

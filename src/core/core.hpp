@@ -3,15 +3,18 @@
 #include <string>
 
 #include "types/polygon.hpp"
+#include "types/line.hpp"
 #include "algorithm/algorithm.hpp"
 #include "types/renderpolygon.hpp"
+#include "types/renderline.hpp"
 #include "sys/render.hpp"
 
 #define WINDOW_PERCENTAGE 0.9
 
 
 namespace CDP{
-using PolygonArray = std::vector<Polygon>;
+using PolygonList = std::vector<Polygon>;
+using LineList    = std::vector<Line>;
 
 
 struct Core{
@@ -48,7 +51,9 @@ struct Core{
     private:
         RenderSystem render;
         RenderPolygon renderPol;
-        PolygonArray polygons;
+        RenderLine    renderLine;
+        PolygonList polygons;
+        LineList    lines;
         double const width{};
         double const height{};
         // Static array. Contains pointer to functions for different scenarios initialization
