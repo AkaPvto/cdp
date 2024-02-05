@@ -22,9 +22,10 @@ struct RenderSystem{
     void end();
     void resolve();
     bool isOpen();
+    void update_init();
 
     template <typename DrawType>
-    void update(DrawType*, int);
+    void draw(DrawType*, int);
 
   
 

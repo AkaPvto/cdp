@@ -15,34 +15,19 @@ void Line::setWidth(float width){
     this->width = width;
 }
 
-void Line::setSmooth(bool smooth){
-    this->smooth = smooth;
-}
-void Line::setStipple(bool stipple, uint8_t stipple_factor, uint16_t stipple_pattern){
-    this->stipple = stipple;
-    this->stipple_factor = stipple_factor;
-    this->stipple_pattern = stipple_pattern;
-}
+// void Line::setSmooth(bool smooth){
+//     this->smooth = smooth;
+// }
+// void Line::setStipple(bool stipple, uint8_t stipple_factor, uint16_t stipple_pattern){
+//     this->stipple = stipple;
+//     this->stipple_factor = stipple_factor;
+//     this->stipple_pattern = stipple_pattern;
+// }
 
 
 void Line::draw(){
     vao.bind();
-
-    // if(smooth) glEnable(GL_LINE_SMOOTH);
-    // if(stipple){
-    //     glEnable(GL_LINE_STIPPLE);
-    //     glLineStipple(stipple_factor, stipple_pattern);
-    // }
-    // glPushAttrib(GL_LINE_BIT);
-
-    glLineWidth( width );
-    glDrawArrays(GL_LINES, 0, 2);
-
-
-
-    // glPopAttrib();
-    // glDisable(GL_LINE_SMOOTH);
-    // glDisable(GL_LINE_STIPPLE);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 } // namespace CDP

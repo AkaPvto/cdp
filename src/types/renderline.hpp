@@ -12,7 +12,7 @@ struct RenderLine{
     void update_buffers(Line&);
     void udpate_vertices(Line&);
     void update_color(Line&);
-    void process_data(Line&, GLfloat*, GLsizeiptr);
+    void process_data(Line&, GLfloat*, GLuint*);
     void delete_buffers(Line&);
 
 private:

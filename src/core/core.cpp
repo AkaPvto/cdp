@@ -64,15 +64,11 @@ void Core::run(){
     // Initialize the program with the base state: AABB Collisions
     initialize(0);
 
-    std::cout << "Initialized\n";
     while(render.isOpen()){
         mouse_movement();
-        std::cout << "Mouse movement completed\n";
         check_collision();
-        std::cout << "Collision checing\n";
         // draw_collision();
         draw();
-        std::cout << "Drawing\n";
     }
     delete_shapes();
     render.end();
@@ -106,8 +102,9 @@ void Core::draw_collision(){
 }
 
 void Core::draw(){
-    render.update<Line>(lines.data(), lines.size());
-    render.update<Polygon>(polygons.data(), polygons.size());
+    render.update_init();
+    render.draw<Line>(lines.data(), lines.size());
+    render.draw<Polygon>(polygons.data(), polygons.size());
     update_ui();
     render.resolve();
 }
@@ -160,7 +157,6 @@ void Core::AABB_init(){
 
     Line line(Vector2r{900, 500}, Vector2r{1300, 800});
     line.setWidth(4);
-    line.setSmooth(true);
 
 
     lines.emplace_back(line);

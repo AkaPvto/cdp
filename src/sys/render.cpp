@@ -69,6 +69,16 @@ void RenderSystem::end(){
     glfwTerminate();
 }
 
+void RenderSystem::update_init(){
+    // Rendering
+    glClearColor(   background_color.r_f,
+                    background_color.g_f,
+                    background_color.b_f,
+                    background_color.a_f );
+    glClear(GL_COLOR_BUFFER_BIT);
+    shader_p.use();
+}
+
 // Swaps the buffer and process the poll events
 void RenderSystem::resolve(){
     glfwSwapBuffers(window);
