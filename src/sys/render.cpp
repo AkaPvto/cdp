@@ -76,7 +76,6 @@ void RenderSystem::update_init(){
                     background_color.b_f,
                     background_color.a_f );
     glClear(GL_COLOR_BUFFER_BIT);
-    shader_p.use();
 }
 
 // Swaps the buffer and process the poll events

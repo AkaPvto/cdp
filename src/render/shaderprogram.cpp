@@ -37,9 +37,15 @@ void ShaderProgram::link(){
     glLinkProgram(program);
 }
 
+
 void ShaderProgram::use(){
     glUseProgram(program);
 }
+
+GLint ShaderProgram::getUniform(char const* name){
+    return glGetUniformLocation(program, name);
+}
+
 
 void ShaderProgram::destroy(){
     glDeleteProgram(program);
