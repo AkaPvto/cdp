@@ -34,7 +34,7 @@ SRC			:= src
 OBJ			:= obj
 LIBDIR		:= lib
 LIBBINDIR	:= $(LIBDIR)/binlibs
-ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libimgui.a $(LIBBINDIR)/libglfw.so.3 $(LIBBINDIR)/libglad.a $(LIBBINDIR)/freetype.a
+ALLBINLIBS	:= $(LIBBINDIR)/libXrender.so.1 $(LIBBINDIR)/libGLdispatch.so.0 $(LIBBINDIR)/libGLX.so.0 $(LIBBINDIR)/libGL.so.1 $(LIBBINDIR)/libXrandr.so.2 $(LIBBINDIR)/libimgui.a $(LIBBINDIR)/libglfw.so.3 $(LIBBINDIR)/libglad.a $(LIBBINDIR)/libfreetype.a
 
 # -L to set folders to search libraries | -l to add libraries to the link processs | -Wl,-rpath= to set the folder priority to include libraries
 LIBS		:= -Llib $(ALLBINLIBS) -Wl,-rpath=lib/

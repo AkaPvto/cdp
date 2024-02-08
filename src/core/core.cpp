@@ -21,16 +21,16 @@
 #define CREAM_RED           205_u8, 70_u8 , 56_u8 , 255_u8
 #define WHITE               255_u8, 255_u8, 255_u8, 255_u8
 
-
 namespace CDP{
 
 // Constructor of the class
 Core::Core( std::string name, double const w, double const h ) : 
- renderPol{uint32_t(w), uint32_t(h)}, renderLine{uint32_t(w), uint32_t(h)}, width{w}, height{h}, 
- initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init},
+ renderPol{uint32_t(w), uint32_t(h)}, renderLine{uint32_t(w), uint32_t(h)}, textMan{uint32_t(w), uint32_t(h)}, 
+ width{w}, height{h}, initialize_types{&Core::AABB_init, &Core::SAT_init, &Core::GJK_init},
  mode_ui{&Core::AABB_ui, &Core::SAT_ui, &Core::GJK_ui} {
     // window(sf::VideoMode(h, w), "Collisions");
     render.init(w, h, name.c_str());
+    textMan.init();
     render.setBackgroundColor(Color(BACKGROUND_COLOR));
 
 }
@@ -70,6 +70,7 @@ void Core::run(){
         // draw_collision();
         draw();
     }
+
     delete_shapes();
     render.end();
 }
@@ -105,6 +106,7 @@ void Core::draw(){
     render.update_init();
     render.draw<Line>(lines.data(), lines.size());
     render.draw<Polygon>(polygons.data(), polygons.size());
+    textMan.render();
     update_ui();
     render.resolve();
 }
@@ -161,6 +163,9 @@ void Core::AABB_init(){
 
     lines.emplace_back(line);
     renderLine.init_buffers(lines.back());
+
+
+    textMan.addText("TEXTO DE EJEMPLO", Vector2r{ 100, 500}, Color(255_u8,255_u8,255_u8,255_u8), 1, true);
 
     algth = new AABB();
 

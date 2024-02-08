@@ -4,6 +4,11 @@ VBO::VBO(){
     glGenBuffers(1, &id);
 }
 
+void VBO::dynamic_insert(GLfloat* vertices, GLsizeiptr size){
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
+}
+
 void VBO::insert(GLfloat* vertices, GLsizeiptr size){
     glBindBuffer(GL_ARRAY_BUFFER, id);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);

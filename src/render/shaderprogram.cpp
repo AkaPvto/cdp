@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <streambuf>
-
+#include <iostream>
 
 std::string read_file(const char* f){
     std::ifstream file(f);
@@ -11,6 +11,7 @@ std::string read_file(const char* f){
 
     return str;
 }
+
 
 void ShaderProgram::init(){
     program = glCreateProgram();

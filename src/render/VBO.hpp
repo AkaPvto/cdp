@@ -7,6 +7,7 @@ struct VBO{
     VBO();
 
     void insert(GLfloat* vertices, GLsizeiptr size);
+    void dynamic_insert(GLfloat* vertices, GLsizeiptr size);
     void modify(GLfloat* data, GLsizeiptr size, GLintptr offset);
     void bind();
     void unbind();

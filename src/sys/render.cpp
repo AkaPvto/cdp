@@ -10,7 +10,7 @@
 #include "types/vector2r.hpp"
 
 
-#define SHADER_ROUTE "src/render/shaders/"
+#define SHADER_PATH "src/render/shaders/"
 
 namespace CDP{
 
@@ -48,8 +48,8 @@ void RenderSystem::init(int width, int height, const char* name){
 
     // Initialize the shader program
     shader_p.init();
-    shader_p.addShader(SHADER_ROUTE"shader.vert", GL_VERTEX_SHADER);
-    shader_p.addShader(SHADER_ROUTE"shader.frag", GL_FRAGMENT_SHADER);
+    shader_p.addShader(SHADER_PATH"shader.vert", GL_VERTEX_SHADER);
+    shader_p.addShader(SHADER_PATH"shader.frag", GL_FRAGMENT_SHADER);
     // shader_p.addShader("shader.geom", GL_GEOMETRY_SHADER);
     shader_p.link();
     
