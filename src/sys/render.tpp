@@ -3,9 +3,15 @@
 namespace CDP{
 
 template <typename DrawType>
-void RenderSystem::draw(DrawType* draw_list, int size){
-    // Use the render shaders linked
-    shader_p.use();
+void RenderSystem::draw(DrawType* draw_list, int size, bool blending = false){
+    // Use the render shaders
+    if(blending){
+        glEnable(GL_BLEND);
+        blend_shader.use();
+    }
+    else{
+        polygon_shader.use();
+    }
 
     // Iterate through the list and call draw function
     void* list_end = draw_list+size;
@@ -13,6 +19,8 @@ void RenderSystem::draw(DrawType* draw_list, int size){
         draw_list->draw();
         draw_list++;
     }
+    
+    glDisable(GL_BLEND);
 }
 
 } // namespace CDP

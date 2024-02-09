@@ -12,6 +12,8 @@
 
 #define SHADER_PATH "src/render/shaders/"
 
+#define INTERSECT_COLOR 205_u8, 70_u8, 56_u8, 255_u8
+
 namespace CDP{
 
 void RenderSystem::init(int width, int height, const char* name){
@@ -46,13 +48,27 @@ void RenderSystem::init(int width, int height, const char* name){
     glViewport(0, 0, width, height);
 
 
-    // Initialize the shader program
-    shader_p.init();
-    shader_p.addShader(SHADER_PATH"shader.vert", GL_VERTEX_SHADER);
-    shader_p.addShader(SHADER_PATH"shader.frag", GL_FRAGMENT_SHADER);
-    // shader_p.addShader("shader.geom", GL_GEOMETRY_SHADER);
-    shader_p.link();
-    
+    // Initialize the shader programs
+    polygon_shader.init();
+    polygon_shader.addShader(SHADER_PATH"shader.vert", GL_VERTEX_SHADER);
+    polygon_shader.addShader(SHADER_PATH"shader.frag", GL_FRAGMENT_SHADER);
+    // polygon_shader.addShader("shader.geom", GL_GEOMETRY_SHADER);
+    polygon_shader.link();
+
+
+    blend_shader.init();
+    blend_shader.addShader(SHADER_PATH"shader.vert", GL_VERTEX_SHADER);
+    blend_shader.addShader(SHADER_PATH"shader_blend.frag", GL_FRAGMENT_SHADER);
+    blend_shader.link();
+    blend_shader.use();
+
+    Color intersect_color(INTERSECT_COLOR);
+    glUniform4f(blend_shader.getUniform("textColor"), 
+                intersect_color.r_f, 
+                intersect_color.g_f, 
+                intersect_color.b_f, 
+                intersect_color.a_f);
+   
 }
 
 
@@ -62,7 +78,7 @@ bool RenderSystem::isOpen(){
 
 void RenderSystem::end(){
     // Delete all the vertex objects and the shader program
-    shader_p.destroy();
+    polygon_shader.destroy();
 
     // Delete the glfw window
     glfwDestroyWindow(window);

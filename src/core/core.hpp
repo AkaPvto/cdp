@@ -55,6 +55,7 @@ struct Core{
         RenderLine    renderLine;
         TextManager textMan;
         PolygonList polygons;
+        PolygonList projections;
         LineList    lines;
         double const width{};
         double const height{};

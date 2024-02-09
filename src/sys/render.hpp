@@ -25,7 +25,7 @@ struct RenderSystem{
     void update_init();
 
     template <typename DrawType>
-    void draw(DrawType*, int);
+    void draw(DrawType*, int, bool);
 
   
 
@@ -39,7 +39,8 @@ struct RenderSystem{
 
     private:
         GLFWwindow* window{};
-        ShaderProgram shader_p;
+        ShaderProgram polygon_shader;
+        ShaderProgram blend_shader;
         Color background_color{};
         void(*user_interface)();
 };
