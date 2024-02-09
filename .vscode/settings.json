@@ -50,6 +50,7 @@
         "typeinfo": "cpp",
         "cstring": "cpp",
         "fstream": "cpp",
-        "*.tpp": "cpp"
+        "*.tpp": "cpp",
+        "typeindex": "cpp"
     }
 }

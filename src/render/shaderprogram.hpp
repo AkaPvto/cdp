@@ -7,6 +7,7 @@ struct ShaderProgram{
     void addShader(char const* filename, GLenum type);
     void link();
     void use();
+    GLint getUniform(char const* name);
     void destroy();
 
     private:

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <streambuf>
-
+#include <iostream>
 
 std::string read_file(const char* f){
     std::ifstream file(f);
@@ -11,6 +11,7 @@ std::string read_file(const char* f){
 
     return str;
 }
+
 
 void ShaderProgram::init(){
     program = glCreateProgram();
@@ -37,9 +38,15 @@ void ShaderProgram::link(){
     glLinkProgram(program);
 }
 
+
 void ShaderProgram::use(){
     glUseProgram(program);
 }
+
+GLint ShaderProgram::getUniform(char const* name){
+    return glGetUniformLocation(program, name);
+}
+
 
 void ShaderProgram::destroy(){
     glDeleteProgram(program);

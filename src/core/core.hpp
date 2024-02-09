@@ -5,9 +5,10 @@
 #include "types/polygon.hpp"
 #include "types/line.hpp"
 #include "algorithm/algorithm.hpp"
-#include "types/renderpolygon.hpp"
-#include "types/renderline.hpp"
+#include "render/renderpolygon.hpp"
+#include "render/renderline.hpp"
 #include "sys/render.hpp"
+#include "sys/textmanager.hpp"
 
 #define WINDOW_PERCENTAGE 0.9
 
@@ -52,6 +53,7 @@ struct Core{
         RenderSystem render;
         RenderPolygon renderPol;
         RenderLine    renderLine;
+        TextManager textMan;
         PolygonList polygons;
         LineList    lines;
         double const width{};
