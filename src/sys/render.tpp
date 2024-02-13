@@ -1,9 +1,11 @@
+#pragma once
+
 #include "render.hpp"
 
 namespace CDP{
 
 template <typename DrawType>
-void RenderSystem::draw(DrawType* draw_list, int size, bool blending = false){
+void RenderSystem::draw(DrawType* draw_list, int size, bool blending){
     // Use the render shaders
     if(blending){
         glEnable(GL_BLEND);

@@ -77,18 +77,18 @@ void Core::run(){
 
 void Core::check_collision(){    
     if(algth != nullptr){
-        if(algth->colide(polygons[0], polygons[1])){
-            polygons[0].setColor(Color(CREAM_RED));
-            renderPol.update_color(polygons[0]);
-            polygons[1].setColor(Color(CREAM_RED));
-            renderPol.update_color(polygons[1]);
-        }
-        else{
-            polygons[0].setColor(Color(SOFT_GREEN));
-            renderPol.update_color(polygons[0]);
-            polygons[1].setColor(Color(LIGHT_BLUE));
-            renderPol.update_color(polygons[1]);
-        }
+        // if(algth->colide(polygons[0], polygons[1])){
+        //     polygons[0].setColor(Color(CREAM_RED));
+        //     renderPol.update_color(polygons[0]);
+        //     polygons[1].setColor(Color(CREAM_RED));
+        //     renderPol.update_color(polygons[1]);
+        // }
+        // else{
+        //     polygons[0].setColor(Color(SOFT_GREEN));
+        //     renderPol.update_color(polygons[0]);
+        //     polygons[1].setColor(Color(LIGHT_BLUE));
+        //     renderPol.update_color(polygons[1]);
+        // }
     }
 }
 
@@ -105,7 +105,7 @@ void Core::draw_collision(){
 void Core::draw(){
     render.update_init();
     render.draw<Line>(lines.data(), lines.size());
-    render.draw<Polygon>(polygons.data(), polygons.size());
+    render.draw<Polygon>(polygons.data(), polygons.size(), true);
     textMan.render();
     update_ui();
     render.resolve();

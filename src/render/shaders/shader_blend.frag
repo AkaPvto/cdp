@@ -3,35 +3,28 @@
 out vec4 FragColor;
 in vec4 color;
 
-// Blending only works with rectangles
-// vec2(xMin)
-// vec2(xMax)
-// vec2(yMin)
-// vec2(yMax)
 
-struct Projection{
-    vec2 xMax;
-    vec2 xMin;
-    vec2 yMax;
-    vec2 yMin;
-};
-
-uniform Projection projectionsArray[15];
 uniform vec4 intersecColor;
+uniform vec4 sensitiveColor1;
+uniform vec4 sensitiveColor2;
 
 void main(){
+    vec4 prev_color = FragColor;
+
     FragColor = color;
 
-    int nProjections = int(length(projectionsArray));
+    // if(prev_color == sensitiveColor1) FragColor = intersecColor;
 
-    int inRect = 0;
-    for(int i = 0; i < nProjections ; i++){
-        if((xMax >= gl_FragCoord.x && xMin <= gl_FragCoord.x) && (yMax >= gl_FragCoord.y && yMin <= gl_FragCoord.y)){
-            inRect++;
-            if(inRect >= 2){
-                FragColor = intersecColor;
-                break;
-            }
-        }
-    }
+    // // check if the given color is one of the sensitive colors
+    // if(color == sensitiveColor1 || color == sensitiveColor2){
+    //     // if the fragment's current color is not the same as the given color
+    //     if(color != prev_color){
+    //         // if the fragment's current color is one of the sensitive colors
+    //         if(prev_color == sensitiveColor1 || prev_color == sensitiveColor2){
+    //             FragColor = intersecColor;
+    //         }
+    //     }
+    // }
+
+
 }

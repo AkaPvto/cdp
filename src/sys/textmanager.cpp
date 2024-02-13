@@ -183,7 +183,6 @@ void TextManager::draw(Text& text){
     text.vao.unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("textmanager.cpp", 199);
 }
 
 } // namespace CDP

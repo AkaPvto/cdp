@@ -9,10 +9,14 @@
 // Temporal, migrar al input system
 #include "types/vector2r.hpp"
 
+#include "types/glerror.hpp"
+
 
 #define SHADER_PATH "src/render/shaders/"
 
-#define INTERSECT_COLOR 205_u8, 70_u8, 56_u8, 255_u8
+#define INTERSECT_COLOR     205_u8, 70_u8,  56_u8,  255_u8
+#define SOFT_GREEN          33_u8 , 184_u8, 49_u8,  255_u8
+#define LIGHT_BLUE          72_u8 , 191_u8, 191_u8, 255_u8
 
 namespace CDP{
 
@@ -62,13 +66,28 @@ void RenderSystem::init(int width, int height, const char* name){
     blend_shader.link();
     blend_shader.use();
 
+
     Color intersect_color(INTERSECT_COLOR);
-    glUniform4f(blend_shader.getUniform("textColor"), 
+    glUniform4f(blend_shader.getUniform("intersecColor"), 
                 intersect_color.r_f, 
                 intersect_color.g_f, 
                 intersect_color.b_f, 
                 intersect_color.a_f);
-   
+
+    Color sensitiveColor1(SOFT_GREEN);
+    glUniform4f(blend_shader.getUniform("sensitiveColor1"), 
+                background_color.r_f, 
+                background_color.g_f, 
+                background_color.b_f, 
+                background_color.a_f);
+
+    Color sensitiveColor2(LIGHT_BLUE);
+    glUniform4f(blend_shader.getUniform("sensitiveColor2"), 
+                sensitiveColor2.r_f, 
+                sensitiveColor2.g_f, 
+                sensitiveColor2.b_f, 
+                sensitiveColor2.a_f);
+
 }
 
 

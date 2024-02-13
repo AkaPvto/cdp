@@ -25,7 +25,7 @@ struct RenderSystem{
     void update_init();
 
     template <typename DrawType>
-    void draw(DrawType*, int, bool);
+    void draw(DrawType*, int, bool blending = false);
 
   
 
