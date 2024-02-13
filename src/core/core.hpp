@@ -16,6 +16,7 @@
 namespace CDP{
 using PolygonList = std::vector<Polygon>;
 using SegmentList    = std::vector<Segment>;
+using LineList    = std::vector<Line>;
 
 
 struct Core{
@@ -56,7 +57,7 @@ struct Core{
         RenderSegment renderSegment{renderLine};
         TextManager textMan;
         PolygonList polygons;
-        SegmentList    segments;
+        LineList    lines;
         double const width{};
         double const height{};
         // Static array. Contains pointer to functions for different scenarios initialization

@@ -1,12 +1,15 @@
 #pragma once
-#include "types/polygon.hpp"
 
-namespace sf{ struct Drawable; }
+
 namespace CDP{
-using DrawList = std::vector<sf::Drawable*>;
+struct Polygon;
+struct RenderSystem;
+
 struct Algorithm{
     virtual bool colide(Polygon const&, Polygon const&) = 0;
-    virtual void draw(DrawList&, Polygon const&, Polygon const&, int, int) = 0;
+    virtual void draw(RenderSystem&) = 0;
     virtual ~Algorithm() = default;
+
+    signed char change_F{-1};
 };
 } // namespace CDP

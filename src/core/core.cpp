@@ -44,15 +44,16 @@ void Core::mouse_movement(){
         polygon.move(localPos - drag_starting_pos);
         renderPol.update_position(polygon);
 
+        algth->change_F = int8_t(dragg_index);
 
-        Segment& segment_x = segments.at(dragg_index);
-        segment_x.setPos(Vector2r{polygon.getPosition().x, segment_x.getPos().y});
-        renderSegment.update_buffers(segment_x);
+        // Segment& segment_x = segments.at(dragg_index);
+        // segment_x.setPos(Vector2r{polygon.getPosition().x, segment_x.getPos().y});
+        // renderSegment.update_buffers(segment_x);
 
 
-        Segment& segment_y = segments.at(dragg_index+2);
-        segment_y.setPos(Vector2r{segment_y.getPos().x, polygon.getPosition().y});
-        renderSegment.update_buffers(segment_y);
+        // Segment& segment_y = segments.at(dragg_index+2);
+        // segment_y.setPos(Vector2r{segment_y.getPos().x, polygon.getPosition().y});
+        // renderSegment.update_buffers(segment_y);
     }
 
     if(render.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
@@ -115,7 +116,7 @@ void Core::draw_collision(){
 
 void Core::draw(){
     render.update_init();
-    render.draw<Segment>(segments.data(), segments.size());
+    algth->draw(render);
     render.draw<Polygon>(polygons.data(), polygons.size());
     textMan.render();
     update_ui();
@@ -130,13 +131,6 @@ void Core::delete_shapes(){
     // Then clear the polygons' instances
     polygons.clear();
 
-    // First destroy all the lines' buffers
-    for(auto& s : segments){
-        renderSegment.delete_buffers(s);
-    }
-
-    // Then clear the lines' instances
-    segments.clear();
 
     if(algth != nullptr){ delete(algth); algth = nullptr;}
 }
@@ -168,32 +162,12 @@ void Core::AABB_init(){
     polygons.emplace_back(p2);
     renderPol.init_buffers(polygons.back());
 
-    
-    real y_Segments = 50;
-    Vector2r pos_1_x = Vector2r{p1.getPosition().x, y_Segments};
-    float length = p1.getVertex(1).x - p1.getVertex(0).x;
-    segments.emplace_back(pos_1_x, length, 50, 5, 0, p1.getColor());
-    renderSegment.init_buffers(segments.back());
-    
-    Vector2r pos_2_x = Vector2r{p2.getPosition().x, y_Segments};
-    length = p2.getVertex(1).x - p2.getVertex(0).x;
-    segments.emplace_back(pos_2_x, length, 50, 5, 0, p2.getColor());
-    renderSegment.init_buffers(segments.back());
-
-    real x_Segments = width - 50;
-    Vector2r pos_1_y = Vector2r{x_Segments, p1.getPosition().y};
-    length = p1.getVertex(3).y - p1.getVertex(0).y;
-    segments.emplace_back(pos_1_y, length, 50, 5, 90, p1.getColor());
-    renderSegment.init_buffers(segments.back());
-    
-    Vector2r pos_2_y = Vector2r{x_Segments, p2.getPosition().y};
-    length = p2.getVertex(3).y - p2.getVertex(0).y;
-    segments.emplace_back(pos_2_y, length, 50, 5, 90, p2.getColor());
-    renderSegment.init_buffers(segments.back());
 
     textMan.addText("TEXTO DE EJEMPLO", Vector2r{ 100, 500}, Color(255_u8,255_u8,255_u8,255_u8), 1, true);
 
     algth = new AABB();
+    dynamic_cast<AABB*>(algth)->init_draw(render, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
+
 
     // for(Polygon const& p : polygons){
     //     std::cout << "Polygon with " << p.getVertexCount() << " vertices:\n";

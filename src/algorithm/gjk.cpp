@@ -1,4 +1,5 @@
 #include "gjk.hpp"
+
 #include <iostream>
 
 
@@ -162,7 +163,7 @@ bool GJK::similarDirection(Vector2r const& v1, Vector2r const& v2){
 }
 
 
-void GJK::draw(DrawList& draw_l, Polygon const& p1, Polygon const& p2, int window_w, int window_h){
+void GJK::draw(RenderSystem& render){
 
 }
 

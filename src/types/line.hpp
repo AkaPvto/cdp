@@ -19,6 +19,8 @@ public:
     
     void setColor(Color const&);
     void setWidth(float);
+    void setStart(Vector2r const&);
+    void setEnd(Vector2r const&);
     // void setSmooth(bool);
     // void setStipple(bool, uint8_t, uint16_t);
 
