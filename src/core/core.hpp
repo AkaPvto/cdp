@@ -3,10 +3,10 @@
 #include <string>
 
 #include "types/polygon.hpp"
-#include "types/line.hpp"
+#include "types/segment.hpp"
 #include "algorithm/algorithm.hpp"
 #include "render/renderpolygon.hpp"
-#include "render/renderline.hpp"
+#include "render/rendersegment.hpp"
 #include "sys/render.hpp"
 #include "sys/textmanager.hpp"
 
@@ -15,7 +15,7 @@
 
 namespace CDP{
 using PolygonList = std::vector<Polygon>;
-using LineList    = std::vector<Line>;
+using SegmentList    = std::vector<Segment>;
 
 
 struct Core{
@@ -53,9 +53,10 @@ struct Core{
         RenderSystem render;
         RenderPolygon renderPol;
         RenderLine    renderLine;
+        RenderSegment renderSegment{renderLine};
         TextManager textMan;
         PolygonList polygons;
-        LineList    lines;
+        SegmentList    segments;
         double const width{};
         double const height{};
         // Static array. Contains pointer to functions for different scenarios initialization

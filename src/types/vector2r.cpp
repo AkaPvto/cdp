@@ -2,6 +2,8 @@
 
 #include "vector2r.hpp"
 
+#define TO_RADIANS M_PIf/180
+
 namespace CDP{
 Vector2r& Vector2r::operator=(Vector2r const& v){
     x = v.x;
@@ -46,6 +48,15 @@ real Vector2r::getMagnitud(){
 Vector2r Vector2r::getNormalized(){
     real magn = getMagnitud();
     return Vector2r{ .x = x/magn, .y = y/magn };
+}
+
+Vector2r Vector2r::getRotated(real rotation){
+    Vector2r rotated{
+        x*cosf(rotation*TO_RADIANS) - y*sinf(rotation*TO_RADIANS),
+        x*sinf(rotation*TO_RADIANS) + y*cosf(rotation*TO_RADIANS)
+    };
+
+    return rotated;
 }
 
 real Vector2r::dot(Vector2r const& v){
