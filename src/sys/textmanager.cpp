@@ -107,8 +107,6 @@ void TextManager::render(){
         std::cout << "ERROR: The characters map has not been initializated\n";
         return;
     }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     shader_p.use();
 
@@ -119,7 +117,6 @@ void TextManager::render(){
 
     }
 
-    glDisable(GL_BLEND);
 }
 
 void TextManager::draw(Text& text){

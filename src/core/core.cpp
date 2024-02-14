@@ -45,15 +45,6 @@ void Core::mouse_movement(){
         renderPol.update_position(polygon);
 
         algth->change_F = int8_t(dragg_index);
-
-        // Segment& segment_x = segments.at(dragg_index);
-        // segment_x.setPos(Vector2r{polygon.getPosition().x, segment_x.getPos().y});
-        // renderSegment.update_buffers(segment_x);
-
-
-        // Segment& segment_y = segments.at(dragg_index+2);
-        // segment_y.setPos(Vector2r{segment_y.getPos().x, polygon.getPosition().y});
-        // renderSegment.update_buffers(segment_y);
     }
 
     if(render.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
@@ -67,6 +58,7 @@ void Core::mouse_movement(){
     }
     else{
         dragg_index = -1;
+        algth->change_F = int8_t(dragg_index);
         dragging = false;
     }
 }
@@ -79,6 +71,7 @@ void Core::run(){
     while(render.isOpen()){
         mouse_movement();
         check_collision();
+        update_ui();
         // draw_collision();
         draw();
     }
@@ -119,7 +112,7 @@ void Core::draw(){
     algth->draw(render);
     render.draw<Polygon>(polygons.data(), polygons.size());
     textMan.render();
-    update_ui();
+    render_ui();
     render.resolve();
 }
 
@@ -144,13 +137,13 @@ void Core::initialize(uint32_t const type){
 
 // Default initialization of AABB case scenario
 void Core::AABB_init(){
-    std::vector<Vector2r> p1_vertices{{0,0}, {200,0}, {200,330},{0,330}};
+    std::vector<Vector2r> p1_vertices{{0,0}, {100,0}, {100,170},{0,170}};
     Polygon p1(p1_vertices, {300,300});
     p1.setColor(Color(SOFT_GREEN));
     p1.setBorder(5);
     p1.setBorderColor(Color(WHITE));
 
-    std::vector<Vector2r> p2_vertices{{0,0}, {300,0}, {300,200}, {0,200}};
+    std::vector<Vector2r> p2_vertices{{0,0}, {150,0}, {150,100}, {0,100}};
     Polygon p2(p2_vertices, {350,200});
     p2.setColor(Color(LIGHT_BLUE));
     p2.setBorder(5);

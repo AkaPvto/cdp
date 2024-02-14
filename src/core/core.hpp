@@ -44,6 +44,7 @@ struct Core{
 
     // UI management
     void update_ui();
+    void render_ui();
     void AABB_ui();
     void SAT_ui();
     void GJK_ui();

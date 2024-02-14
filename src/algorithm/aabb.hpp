@@ -24,6 +24,10 @@ struct AABB : Algorithm{
     bool projection_F   {false};
     bool labels_F       {false};
 
+    // Collision flags
+    bool axis_x_col{false};
+    bool axis_y_col{false};
+
 
 private:
     // Projections

@@ -41,6 +41,9 @@ Color const& Segment::getColor() const{
 
 void Segment::setColor(Color const& c){
     color = c;
+    segment_lines[0].setColor(c);
+    segment_lines[1].setColor(c);
+    segment_lines[2].setColor(c);
 }
 
 std::array<Line, 3> Segment::getGlobalLines() const{

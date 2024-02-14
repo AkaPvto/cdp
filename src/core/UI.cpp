@@ -40,7 +40,9 @@ void Core::update_ui(){
 
     (this->*mode_ui.at(mode_index))();
 
-    // ImGui::PopFont();
+}
+
+void Core::render_ui(){
     ImGui::End();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
