@@ -55,11 +55,11 @@ void Core::AABB_ui(){
     ImGui::SetWindowFontScale(1.0f);
     ImGui::PushFont(render.getLightFont());
 
-    ImGui::Checkbox("Show algorithm", &draw_algth);
 
     assert(algth != nullptr);
-
     AABB& algorithm_AABB = *dynamic_cast<AABB*>(algth);
+
+    if(ImGui::Checkbox("Show algorithm", &draw_algth)) algorithm_AABB.update_all(render, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
 
     if(draw_algth){
         ImGui::Indent(20.0f);

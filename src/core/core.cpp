@@ -109,7 +109,7 @@ void Core::draw_collision(){
 
 void Core::draw(){
     render.update_init();
-    algth->draw(render);
+    if(draw_algth) algth->draw(render);
     render.draw<Polygon>(polygons.data(), polygons.size());
     textMan.render();
     render_ui();

@@ -109,12 +109,8 @@ void TextManager::render(){
     }
 
     shader_p.use();
-
-
-
     for(auto& text : text_storage){
         if(text.renderable) draw(text);
-
     }
 
 }
