@@ -12,4 +12,48 @@ Color::Color(uint8_t _r,uint8_t _g, uint8_t _b,uint8_t _a) :
 Color::Color(float _r,float _g, float _b,float _a) :
     r{uint8_t(_r*255)}, g{uint8_t(_g*255)}, b{uint8_t(_b*255)}, a{uint8_t(_a*255)}, r_f{_r}, g_f{_g}, b_f{_b}, a_f{_a} {}
 
+
+void Color::setRed(float value){
+    r_f = value;
+    r = value*255;
+}
+
+void Color::setRed(uint8_t value){
+    r = value;
+    r_f = value/255;
+}
+
+void Color::setGreen(float value){
+    g_f = value;
+    g = value*255;
+}
+
+void Color::setGreen(uint8_t value){
+    g = value;
+    g_f = value/255;
+}
+
+void Color::setBlue(float value){
+    b_f = value;
+    b = value*255;
+}
+
+void Color::setBlue(uint8_t value){
+    b = value;
+    b_f = value/255;
+}
+
+void Color::setAlpha(float value){
+    a_f = value;
+    a = value*255;
+}
+
+void Color::setAlpha(uint8_t value){
+    a = value;
+    a_f = value/255;
+}
+
+
+
+
 } // namespace CDP

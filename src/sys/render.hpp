@@ -13,8 +13,8 @@
 #define DEFAULT_WINDOW_WIDTH    1920
 #define DEFAULT_WINDOW_HEIGHT   1080
 
+struct ImFont;
 namespace CDP{
-
 struct Vector2r; // Temporal, migrar al input system
 
 struct RenderSystem{
@@ -27,8 +27,13 @@ struct RenderSystem{
     template <typename DrawType>
     void draw(DrawType*, int);
 
+    // Get window dimensions
+    int getWidth() const;
+    int getHeight() const;
   
-
+    // Acces to the loaded fonts
+    ImFont* getLightFont() const;
+    ImFont* getHeavyFont() const;
 
     // Temporal, migrar al input system
     void getMousePos(Vector2r& v);
@@ -42,6 +47,8 @@ struct RenderSystem{
         ShaderProgram shader_p;
         Color background_color{};
         void(*user_interface)();
+        ImFont* font_l{nullptr};
+        ImFont* font_h{nullptr};
 };
 
 

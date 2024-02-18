@@ -1,4 +1,5 @@
 #include "gjk.hpp"
+
 #include <iostream>
 
 
@@ -162,10 +163,13 @@ bool GJK::similarDirection(Vector2r const& v1, Vector2r const& v2){
 }
 
 
-void GJK::draw(DrawList& draw_l, Polygon const& p1, Polygon const& p2, int window_w, int window_h){
+void GJK::draw(RenderSystem& render){
 
 }
 
+void GJK::destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment){
+
+}
 
 GJK::Vector3r GJK::toVector3r(Vector2r const& v) const{
     return Vector3r{v.x, v.y, 0};

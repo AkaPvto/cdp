@@ -8,6 +8,7 @@
 
 #include "types/glerror.hpp"
 #include <iostream>
+#include <cassert>
 
 #define CHAR_VERTICES   6   // Number of vertices per character
 #define VERTEX_SIZE     4   // Number of floats per vertex
@@ -36,7 +37,7 @@ void TextManager::init(){
         return;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, 20);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
@@ -87,11 +88,12 @@ void TextManager::init(){
 
 
 unsigned int TextManager::addText(const char* txt, Vector2r pos, Color color, unsigned int scale, bool render_){
-    text_storage.emplace_back(std::string(txt), pos.x, pos.y, color, scale, render_);
+    auto hint = text_storage.find(current_ID);
+    auto text_it = text_storage.emplace_hint(hint, current_ID++, Text(std::string(txt), pos.x, pos.y, color, scale, render_));
 
     // Prepare the VBO and the VAO
     // Set up of the VBO empty for future insertion of the data
-    Text& added_txt = text_storage.back();
+    Text& added_txt = text_it->second;
     added_txt.vao.bind();
     added_txt.vbo.bind();
     added_txt.vbo.dynamic_insert(NULL, sizeof(GLfloat)*VERTEX_SIZE*CHAR_VERTICES);
@@ -102,24 +104,35 @@ unsigned int TextManager::addText(const char* txt, Vector2r pos, Color color, un
     return text_storage.size()-1;
 }
 
+unsigned int TextManager::addText(Text const& text){
+    auto hint = text_storage.find(current_ID);
+    auto text_it = text_storage.emplace_hint(hint, current_ID++, text);
+
+    // Prepare the VBO and the VAO
+    // Set up of the VBO empty for future insertion of the data
+    Text& added_txt = text_it->second;
+    added_txt.vao.bind();
+    added_txt.vbo.bind();
+    added_txt.vbo.dynamic_insert(NULL, sizeof(GLfloat)*VERTEX_SIZE*CHAR_VERTICES);
+    added_txt.vao.addAttrib(0, 4, GL_FLOAT, 4*sizeof(GLfloat), (void*)0);
+    added_txt.vbo.unbind();
+    added_txt.vao.unbind();
+
+    return current_ID-1;
+}
+
+
 void TextManager::render(){
     if(char_set.size() <= 0) {
         std::cout << "ERROR: The characters map has not been initializated\n";
         return;
     }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     shader_p.use();
-
-
-
-    for(auto& text : text_storage){
+    for(auto& [id, text] : text_storage){
         if(text.renderable) draw(text);
-
     }
 
-    glDisable(GL_BLEND);
 }
 
 void TextManager::draw(Text& text){
@@ -183,7 +196,100 @@ void TextManager::draw(Text& text){
     text.vao.unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("textmanager.cpp", 199);
+    checkGLError("textmanager.cpp", 179);
+}
+
+// Gets the length in pixels of the text with the given ID
+int TextManager::getTextLength(size_t index){
+    Text& text = text_storage.at(index);
+    std::string::const_iterator char_;
+
+    int length{};
+    // Iterate through all the characters from the string one by one
+    for(char_ = text.content.begin(); char_ != text.content.end(); char_++){
+        // Obtain the character from the char_set map
+        Character ch = char_set.at(*char_);
+        length += (ch.advance >> 6);// bitshift by 6 to get the value in pixels (2^6 = 64)
+    }
+    return length;
+}
+
+// Gets the length in pixels of the text with the given ID
+int TextManager::getTextLength(Text const& text){
+    std::string::const_iterator char_;
+
+    int length{};
+    // Iterate through all the characters from the string one by one
+    for(char_ = text.content.begin(); char_ != text.content.end(); char_++){
+        // Obtain the character from the char_set map
+        Character ch = char_set.at(*char_);
+        length += (ch.advance >> 6);// bitshift by 6 to get the value in pixels (2^6 = 64)
+    }
+    return length;
+}
+
+
+// SETTERS
+void TextManager::setTextContent(size_t index, const char* c){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+    
+    text_storage.at(index).content = c;
+}
+
+
+void TextManager::setTextPos(size_t index, Vector2r pos){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+    
+    text_storage.at(index).posX = pos.x;
+    text_storage.at(index).posY = pos.y;
+}
+
+void TextManager::setTextColor(size_t index, Color color){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+    
+    text_storage.at(index).color = color;
+}
+
+void TextManager::setTextScale(size_t index, unsigned int scale){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+
+    text_storage.at(index).scale = scale;
+}
+
+void TextManager::setTextRenderable(size_t index, bool renderable){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+    
+    text_storage.at(index).renderable = renderable;
+}
+
+void TextManager::deleteText(size_t index){
+    if(!text_storage.contains(index)){
+        std::cout << "Doesn't contain that index\n";
+        return;
+    }
+
+    text_storage.at(index).destroy();
+    text_storage.erase(index);
+}
+// END SETTERS
+
+void TextManager::end(){
+    shader_p.destroy();
 }
 
 } // namespace CDP

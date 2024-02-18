@@ -2,6 +2,9 @@
 
 #include <array>
 
+#include "types/vector2r.hpp"
+#include "types/polygon.hpp"
+
 namespace CDP{
 
 struct GJK : Algorithm{
@@ -39,7 +42,9 @@ struct GJK : Algorithm{
     // typedef bool(GJK::*gjk_func)(Simplex&, Vector2r&);
     // std::array<gjk_func, 2> updateSimplex{onedimensional, bidimensional};
 
-    void draw(DrawList&, Polygon const&, Polygon const&, int, int);
+    void draw(RenderSystem&);
+
+    void destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment);
 
 };
 

@@ -16,6 +16,7 @@ struct Vector2r{
     real getMagnitud();
     real dot(Vector2r const&);
     Vector2r getNormalized();
+    Vector2r getRotated(real);
 };
 Vector2r operator+(Vector2r const& v1, Vector2r const& v2);
 Vector2r operator-(Vector2r const& v1, Vector2r const& v2);

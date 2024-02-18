@@ -40,9 +40,11 @@ void Core::mouse_movement(){
     localPos.y = height - localPos.y;
 
     if(dragg_index >= 0){
-        polygons.at(dragg_index).move(localPos - drag_starting_pos);
-        renderPol.update_position(polygons.at(dragg_index));
+        Polygon& polygon = polygons.at(dragg_index);
+        polygon.move(localPos - drag_starting_pos);
+        renderPol.update_position(polygon);
     }
+    algth->change_F = int8_t(dragg_index);
 
     if(render.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
         if(dragg_index <= 0 && !dragging){
@@ -67,12 +69,14 @@ void Core::run(){
     while(render.isOpen()){
         mouse_movement();
         check_collision();
+        update_ui();
         // draw_collision();
         draw();
     }
 
     delete_shapes();
     render.end();
+    textMan.end();
 }
 
 void Core::check_collision(){    
@@ -104,10 +108,10 @@ void Core::draw_collision(){
 
 void Core::draw(){
     render.update_init();
-    render.draw<Line>(lines.data(), lines.size());
+    if(draw_algth) algth->draw(render);
     render.draw<Polygon>(polygons.data(), polygons.size());
     textMan.render();
-    update_ui();
+    render_ui();
     render.resolve();
 }
 
@@ -119,14 +123,13 @@ void Core::delete_shapes(){
     // Then clear the polygons' instances
     polygons.clear();
 
-    // First destroy all the lines' buffers
-    for(auto& l : lines){
-        renderLine.delete_buffers(l);
+    // Clean the buffers and free the alogithm memory
+    if(algth != nullptr){ 
+        algth->destroy(textMan, renderPol, renderLine, renderSegment);
+        delete(algth); 
+        algth = nullptr;
     }
-    // Then clear the lines' instances
-    lines.clear();
-
-    if(algth != nullptr){ delete(algth); algth = nullptr;}
+    
 }
 
 // Uses the initialization function indicated by param from the static array
@@ -138,13 +141,13 @@ void Core::initialize(uint32_t const type){
 
 // Default initialization of AABB case scenario
 void Core::AABB_init(){
-    std::vector<Vector2r> p1_vertices{{0,0}, {200,0}, {200,330},{0,330}};
+    std::vector<Vector2r> p1_vertices{{0,0}, {100,0}, {100,170},{0,170}};
     Polygon p1(p1_vertices, {300,300});
     p1.setColor(Color(SOFT_GREEN));
     p1.setBorder(5);
     p1.setBorderColor(Color(WHITE));
 
-    std::vector<Vector2r> p2_vertices{{0,0}, {300,0}, {300,200}, {0,200}};
+    std::vector<Vector2r> p2_vertices{{0,0}, {150,0}, {150,100}, {0,100}};
     Polygon p2(p2_vertices, {350,200});
     p2.setColor(Color(LIGHT_BLUE));
     p2.setBorder(5);
@@ -157,17 +160,9 @@ void Core::AABB_init(){
     renderPol.init_buffers(polygons.back());
 
 
-    Line line(Vector2r{900, 500}, Vector2r{1300, 800});
-    line.setWidth(4);
-
-
-    lines.emplace_back(line);
-    renderLine.init_buffers(lines.back());
-
-
-    textMan.addText("TEXTO DE EJEMPLO", Vector2r{ 100, 500}, Color(255_u8,255_u8,255_u8,255_u8), 1, true);
-
     algth = new AABB();
+    dynamic_cast<AABB*>(algth)->init_draw(render, textMan, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
+
 
     // for(Polygon const& p : polygons){
     //     std::cout << "Polygon with " << p.getVertexCount() << " vertices:\n";

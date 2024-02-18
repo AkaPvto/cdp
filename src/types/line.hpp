@@ -10,14 +10,17 @@
 namespace CDP{
 
 struct RenderLine;
+struct Segment;
 
 struct Line{
 public:
     Line() = default;
     Line(Vector2r const&, Vector2r const&, Color c = Color(1.0f,1.0f,1.0f,1.0f), float width = 1);
-
+    
     void setColor(Color const&);
     void setWidth(float);
+    void setStart(Vector2r const&);
+    void setEnd(Vector2r const&);
     // void setSmooth(bool);
     // void setStipple(bool, uint8_t, uint16_t);
 
@@ -38,7 +41,7 @@ private:
     EBO ebo;
 
 friend RenderLine;
-
+friend Segment;
 };
 
 } // namespace CDP

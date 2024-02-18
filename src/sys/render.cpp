@@ -34,11 +34,14 @@ void RenderSystem::init(int width, int height, const char* name){
     // ImGui initialization and link with the window
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    // ImGuiIO& io = // <== Check if storaging the ImGui ID may be needed in the future 
-    ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
     ImGui::StyleColorsDark();
+    
+    // Storage the font memory address in the rendersystem attributes
+    font_h = io.Fonts->AddFontFromFileTTF("fonts/truetypes/Nexa-Heavy.ttf", 18.0f);
+    font_l = io.Fonts->AddFontFromFileTTF("fonts/truetypes/Nexa-ExtraLight.ttf", 18.0f);
 
     // Glad initialization and configuration
     gladLoadGL();
@@ -52,7 +55,9 @@ void RenderSystem::init(int width, int height, const char* name){
     shader_p.addShader(SHADER_PATH"shader.frag", GL_FRAGMENT_SHADER);
     // shader_p.addShader("shader.geom", GL_GEOMETRY_SHADER);
     shader_p.link();
-    
+
+    glEnable(GL_BLEND);    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -61,8 +66,11 @@ bool RenderSystem::isOpen(){
 }
 
 void RenderSystem::end(){
-    // Delete all the vertex objects and the shader program
+    // Delete the shader program
     shader_p.destroy();
+
+    // Pop the Nexa font loaded
+    // ImGui::PopFont();
 
     // Delete the glfw window
     glfwDestroyWindow(window);
@@ -82,7 +90,35 @@ void RenderSystem::update_init(){
 void RenderSystem::resolve(){
     glfwSwapBuffers(window);
     glfwPollEvents();
+
 }
+
+
+// Get window dimensions
+int RenderSystem::getWidth() const{
+    int width;
+    glfwGetFramebufferSize(window, &width, NULL);
+
+    return width;
+};
+
+int RenderSystem::getHeight() const{
+    int height;
+    glfwGetFramebufferSize(window, NULL, &height);
+
+    return height;
+}
+
+
+ImFont* RenderSystem::getLightFont() const{
+    return font_l;
+}
+
+ImFont* RenderSystem::getHeavyFont() const{
+    return font_h;
+}
+
+
 
 // Temporal, migrar al input system
 void RenderSystem::getMousePos(Vector2r& v){

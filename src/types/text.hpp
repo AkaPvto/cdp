@@ -14,6 +14,7 @@ struct RenderText;  // Forward declaration to friend the RenderText class
 struct Text{
 public:
     Text(std::string s, float x, float y, Color c, unsigned int scl, bool rend) : content{s}, posX{x}, posY{y}, color{c}, scale{scl}, renderable{rend} {}
+    void destroy();
 private:
     std::string content{};
     float posX{}, posY{};

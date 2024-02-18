@@ -15,6 +15,16 @@ void Line::setWidth(float width){
     this->width = width;
 }
 
+void Line::setStart(Vector2r const& start_){
+    start = start_;
+}
+
+void Line::setEnd(Vector2r const& end_){
+    end = end_;
+}
+
+
+
 // void Line::setSmooth(bool smooth){
 //     this->smooth = smooth;
 // }
