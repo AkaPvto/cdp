@@ -13,5 +13,7 @@ struct SAT : Algorithm{
     Intersection proyection(Vector2r const& axis, Polygon const& p);
 
     void draw(RenderSystem&);
+    void destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment);
+
 };
 } // namespace CDP

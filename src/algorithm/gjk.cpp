@@ -167,6 +167,9 @@ void GJK::draw(RenderSystem& render){
 
 }
 
+void GJK::destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment){
+
+}
 
 GJK::Vector3r GJK::toVector3r(Vector2r const& v) const{
     return Vector3r{v.x, v.y, 0};

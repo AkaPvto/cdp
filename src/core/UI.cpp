@@ -59,7 +59,7 @@ void Core::AABB_ui(){
     assert(algth != nullptr);
     AABB& algorithm_AABB = *dynamic_cast<AABB*>(algth);
 
-    if(ImGui::Checkbox("Show algorithm", &draw_algth)) algorithm_AABB.update_all(render, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
+    if(ImGui::Checkbox("Show algorithm", &draw_algth)) algorithm_AABB.update_all(render, textMan, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
 
     if(draw_algth){
         ImGui::Indent(20.0f);
@@ -68,11 +68,11 @@ void Core::AABB_ui(){
 
         ImGui::Checkbox("Polygon proyections", &algorithm_AABB.projection_F);
 
-        ImGui::Checkbox("Labeled axis", &algorithm_AABB.labels_F);
+        if(ImGui::Checkbox("Labeled axis", &algorithm_AABB.labels_F)) algorithm_AABB.toggle_labels(textMan);
 
         ImGui::Unindent(20.0f);
 
-        algorithm_AABB.update(render, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
+        algorithm_AABB.update(render, textMan, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
     }
 
     ImGui::PopFont();

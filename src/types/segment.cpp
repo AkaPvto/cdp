@@ -46,6 +46,45 @@ void Segment::setColor(Color const& c){
     segment_lines[2].setColor(c);
 }
 
+float Segment::getLength() const{
+    return length;
+}
+
+void Segment::setLength(float l){
+    length = l;
+    update();
+}
+
+float Segment::getHeight() const{
+    return height;
+}
+
+void Segment::setHeight(float h){
+    height = h;
+    update();
+}
+
+float Segment::getWidth() const{
+    return width;
+}
+
+void Segment::setWidth(float w){
+    width = w;
+    segment_lines[0].setWidth(w);
+    segment_lines[1].setWidth(w);
+    segment_lines[2].setWidth(w);
+}
+
+void Segment::update(){
+    segment_lines[0].start = Vector2r{0,-height/2};
+    segment_lines[0].end = Vector2r{0,height/2};
+    segment_lines[1].start = Vector2r{length,-height/2};
+    segment_lines[1].end = Vector2r{length,height/2};
+    segment_lines[2].start = Vector2r{0,0};
+    segment_lines[2].end = Vector2r{length,0};
+}
+
+
 std::array<Line, 3> Segment::getGlobalLines() const{
     std::array<Line, 3> global_lines;
     for(unsigned int i{}; i<global_lines.size();++i){

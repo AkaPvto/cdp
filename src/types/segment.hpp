@@ -15,6 +15,14 @@ struct Segment{
     void setPos(Vector2r const&);
     Color const& getColor() const;
     void setColor(Color const&);
+    float getLength() const;
+    void setLength(float l);
+    float getHeight() const;
+    void setHeight(float h);
+    float getWidth() const;
+    void setWidth(float w);
+
+    void update();
     std::array<Line, 3> getGlobalLines() const;
     void draw();
 

@@ -58,7 +58,10 @@ SAT::Intersection SAT::proyection(Vector2r const& axis, Polygon const& p){
 
 void SAT::draw(RenderSystem& render){
 
+}
 
+void SAT::destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment){
 
 }
+
 } // namespace CDP

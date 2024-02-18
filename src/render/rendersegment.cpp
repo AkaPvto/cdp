@@ -41,7 +41,7 @@ void RenderSegment::update_color(Segment& segment){
 }
 
 void RenderSegment::delete_buffers(Segment& segment){
-    auto lines = segment.getLines();
+    auto& lines = segment.getLines();
     
     renderLine.delete_buffers(lines[0]);
     renderLine.delete_buffers(lines[1]);

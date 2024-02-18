@@ -44,6 +44,8 @@ struct GJK : Algorithm{
 
     void draw(RenderSystem&);
 
+    void destroy(TextManager& textMan, RenderPolygon& renderPol, RenderLine& renderLine, RenderSegment& renderSegment);
+
 };
 
 // Cross product operator for Vector3r class

@@ -43,9 +43,8 @@ void Core::mouse_movement(){
         Polygon& polygon = polygons.at(dragg_index);
         polygon.move(localPos - drag_starting_pos);
         renderPol.update_position(polygon);
-
-        algth->change_F = int8_t(dragg_index);
     }
+    algth->change_F = int8_t(dragg_index);
 
     if(render.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
         if(dragg_index <= 0 && !dragging){
@@ -58,7 +57,6 @@ void Core::mouse_movement(){
     }
     else{
         dragg_index = -1;
-        algth->change_F = int8_t(dragg_index);
         dragging = false;
     }
 }
@@ -78,6 +76,7 @@ void Core::run(){
 
     delete_shapes();
     render.end();
+    textMan.end();
 }
 
 void Core::check_collision(){    
@@ -124,8 +123,13 @@ void Core::delete_shapes(){
     // Then clear the polygons' instances
     polygons.clear();
 
-
-    if(algth != nullptr){ delete(algth); algth = nullptr;}
+    // Clean the buffers and free the alogithm memory
+    if(algth != nullptr){ 
+        algth->destroy(textMan, renderPol, renderLine, renderSegment);
+        delete(algth); 
+        algth = nullptr;
+    }
+    
 }
 
 // Uses the initialization function indicated by param from the static array
@@ -156,10 +160,8 @@ void Core::AABB_init(){
     renderPol.init_buffers(polygons.back());
 
 
-    textMan.addText("TEXTO DE EJEMPLO", Vector2r{ 100, 500}, Color(255_u8,255_u8,255_u8,255_u8), 1, true);
-
     algth = new AABB();
-    dynamic_cast<AABB*>(algth)->init_draw(render, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
+    dynamic_cast<AABB*>(algth)->init_draw(render, textMan, renderPol, renderSegment, renderLine, polygons.at(0), polygons.at(1));
 
 
     // for(Polygon const& p : polygons){
