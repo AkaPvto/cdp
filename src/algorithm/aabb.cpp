@@ -220,10 +220,10 @@ void AABB::update_projection_pos(RenderPolygon& renderPol, RenderLine& renderLin
 
 // Update the text values and position
 void AABB::update_label(TextManager& textMan, LabelData const& data, size_t index){
-    textMan.setTextContent(index*2, data.start_c.c_str());
-    textMan.setTextContent(index*2 +1, data.end_c.c_str());
-    textMan.setTextPos(index*2, data.startPos);
-    textMan.setTextPos(index*2 +1, data.endPos);
+    textMan.setTextContent(labels.at(index*2), data.start_c.c_str());
+    textMan.setTextContent(labels.at(index*2 +1), data.end_c.c_str());
+    textMan.setTextPos(labels.at(index*2), data.startPos);
+    textMan.setTextPos(labels.at(index*2 +1), data.endPos);
 }
 
 // Set up renderable of not renderable the labels
@@ -237,16 +237,16 @@ void AABB::update_label_color(TextManager& textMan, size_t index, bool axis_col)
     Color intersec_color(INTERSEC_COLOR);
 
     if(axis_col){
-        textMan.setTextColor(index*2, intersec_color);
-        textMan.setTextColor(index*2+1, intersec_color);
-        textMan.setTextColor((index+1)*2, intersec_color);
-        textMan.setTextColor((index+1)*2+1, intersec_color);
+        textMan.setTextColor(labels.at(index*2), intersec_color);
+        textMan.setTextColor(labels.at(index*2+1), intersec_color);
+        textMan.setTextColor(labels.at((index+1)*2), intersec_color);
+        textMan.setTextColor(labels.at((index+1)*2+1), intersec_color);
     }
     else{
-        textMan.setTextColor(index*2, color1);
-        textMan.setTextColor(index*2+1, color1);
-        textMan.setTextColor((index+1)*2, color2);
-        textMan.setTextColor((index+1)*2+1, color2);
+        textMan.setTextColor(labels.at(index*2), color1);
+        textMan.setTextColor(labels.at(index*2+1), color1);
+        textMan.setTextColor(labels.at((index+1)*2), color2);
+        textMan.setTextColor(labels.at((index+1)*2+1), color2);
     }
 }
 

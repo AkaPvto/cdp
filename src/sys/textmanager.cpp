@@ -101,7 +101,7 @@ unsigned int TextManager::addText(const char* txt, Vector2r pos, Color color, un
     added_txt.vbo.unbind();
     added_txt.vao.unbind();
 
-    return text_storage.size()-1;
+    return current_ID-1;
 }
 
 unsigned int TextManager::addText(Text const& text){
@@ -232,7 +232,7 @@ int TextManager::getTextLength(Text const& text){
 // SETTERS
 void TextManager::setTextContent(size_t index, const char* c){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - setTextContent(size_t, const char*)\n";
         return;
     }
     
@@ -242,7 +242,7 @@ void TextManager::setTextContent(size_t index, const char* c){
 
 void TextManager::setTextPos(size_t index, Vector2r pos){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - setTextPos(size_t, Vector2r)\n";
         return;
     }
     
@@ -252,7 +252,7 @@ void TextManager::setTextPos(size_t index, Vector2r pos){
 
 void TextManager::setTextColor(size_t index, Color color){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - setTextColor(size_t, Color)\n";
         return;
     }
     
@@ -261,7 +261,7 @@ void TextManager::setTextColor(size_t index, Color color){
 
 void TextManager::setTextScale(size_t index, unsigned int scale){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - setTextScale(size_t, unsigned int)\n";
         return;
     }
 
@@ -270,7 +270,7 @@ void TextManager::setTextScale(size_t index, unsigned int scale){
 
 void TextManager::setTextRenderable(size_t index, bool renderable){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - setTextRenderable(size_t, bool)\n";
         return;
     }
     
@@ -279,7 +279,7 @@ void TextManager::setTextRenderable(size_t index, bool renderable){
 
 void TextManager::deleteText(size_t index){
     if(!text_storage.contains(index)){
-        std::cout << "Doesn't contain that index\n";
+        std::cout << "Doesn't contain index " << index << " - deleteText(size_t)\n";
         return;
     }
 
